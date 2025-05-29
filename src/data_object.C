@@ -55,3 +55,30 @@ TString data_object::makeInputFileName(){
   }
 return inputfile;
 } // end makeInputFileName
+
+data_object::data_object(int runnum, const char *data_file_name, const char *kinematic_file_name, TString Kin, TString SBS_field, TString targ, TString daPass){
+
+ifstream datafile(data_file_name);
+
+if(datafile.fail()){
+  cout << "Error:There was a problem with the data file " << data_file_name << ". Figure it out nerd!" << endl;
+  return;
+}
+
+TString currentLine;
+bool gotRun = false;
+TString runnum_string = utility::intToTString(runnum);
+
+while(currentLine.ReadLine(datafile)){
+  if(currentLine.BeginsWith(runnum_string)){
+    TObjArray *tokens = currentLine.Tokensize("  ");
+    run = (((TObjString*) (*tokens)[0])->GetString()).Atoi();
+    pass = ((TObjString*) (*tokens)[1])->GetString();
+    kinematic = ((TObjString*) (*tokens)[2])->GetString();
+    target = ((TObjString*) (*tokens)[3])->GetString();
+    sbs_field = (((TObjString*) (*tokens)[4])->GetString()).Atoi();
+    // define other things from the data map?
+  } // end if line begins with runnum
+} // end while reading lines
+
+} // end data_object
