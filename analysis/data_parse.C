@@ -112,9 +112,9 @@ void data_elastic_parse(const char *setup_file_name){
   }
   
   int num_runs = runNums.size();
-  double hcalfit_low = exp_constants::hcalposXi_mc; //lower fit/bin limit for hcal dx plots. 
-  double hcalfit_high = exp_constants::hcalposXf_mc; //higher fit/bin limit for hcal dx plots.
-  double hcal_fitrange = exp_constants::hcal_vrange; //Full range of hcal dx plots
+  //double hcalfit_low = exp_constants::hcalposXi_mc; //lower fit/bin limit for hcal dx plots. 
+  //double hcalfit_high = exp_constants::hcalposXf_mc; //higher fit/bin limit for hcal dx plots.
+  //double hcal_fitrange = exp_constants::hcal_vrange; //Full range of hcal dx plots
 
   //store all the data information we care about in a vector of data_objects for further use
   vector<data_object> myData;
@@ -410,7 +410,6 @@ void data_elastic_parse(const char *setup_file_name){
 
   double ntrack, tr_px[maxtracks], tr_py[maxtracks], tr_pz[maxtracks], tr_p[maxtracks], tr_x[maxtracks], tr_y[maxtracks], tr_vx[maxtracks], tr_vy[maxtracks], tr_vz[maxtracks], tr_r_x[maxtracks], tr_r_y[maxtracks],tr_r_th[maxtracks], tr_r_ph[maxtracks], tr_th[maxtracks], tr_ph[maxtracks];
 
-
   C->SetBranchStatus("bb.tr.n",1);
   C->SetBranchStatus("bb.tr.px",1);
   C->SetBranchStatus("bb.tr.py",1);  
@@ -486,7 +485,6 @@ void data_elastic_parse(const char *setup_file_name){
   //ttree formula variables
   int treenum = 0, currenttreenum = 0;
 
-     
   	//event loop 
   	while(C->GetEntry(nevent++)){
 	
