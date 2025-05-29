@@ -22,36 +22,52 @@ TString data_object::makeInputFileName(){
       if(target == "He3"){
 	inputfile = Form("%s/%s/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,run);
       } // end if He3
-      if(target == "H2"){
+      else if(target == "H2"){
 	inputfile = Form("%s/%s/%s/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,tar_char,run);
       } // end if H2
+      else {
+	cout << "ERROR!! There is no target: " << target << ", dummy!" << endl;
+      }
     } // end if GEN2
 
-    if(kinematic == "GEN3"){
+    else if(kinematic == "GEN3"){
       if(target == "He3"){
 	inputfile = Form("%s/%s/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,run);
       } // end if He3
-      if(target == "H2"){
+      else if(target == "H2"){
 	inputfile = Form("%s/%s/%s/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,tar_char,run);
       } // end if H2
+      else {
+	cout << "ERROR!! There is no target: " << target << ", dummy!" << endl;
+      }
     } // end if GEN3
 
-    if(kinematic == "GEN4a"){
+    else if(kinematic == "GEN4a"){
       if(target == "He3"){
 	inputfile = Form("%s/%s/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,run);
       } // end if He3
+      else {
+	cout << "ERROR!! There is no target: " << target << ", dummy!" << endl;
+      }
     } // end if GEN4a
 
-    if(kinematic == "GEN4b"){
+    else if(kinematic == "GEN4b"){
       if(target == "He3"){
 	inputfile = Form("%s/%s/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,run);
       } // end if He3
+      else {
+	cout << "ERROR!! There is no target: " << target << ", dummy!" << endl;
+      }
     } // end if GEN4b
+
+    else {
+      cout << "ERROR!! There is no kinematic: " << kinematic << ", dummy!" << endl;
+    }
 
   } // end if pass2
   else{
     //make an error. Some how we got not pass 0,1, or 2
-    cout << "Error: Pass variable was given that is not pass 0,1, or 2 " << pass << " !" << endl;
+    cout << "Error: Pass variable was given that is not pass 0,1, or 2. It's actually pass " << pass << "! That's not a pass. Stupid." << endl;
   }
 return inputfile;
 } // end makeInputFileName
@@ -61,7 +77,7 @@ data_object::data_object(int runnum, const char *data_file_name, const char *kin
 ifstream datafile(data_file_name);
 
 if(datafile.fail()){
-  cout << "Error:There was a problem with the data file " << data_file_name << ". Figure it out nerd!" << endl;
+  cout << "Error:There was a problem with the data file " << data_file_name << ". Figure it out, nerd!" << endl;
   return;
 }
 
@@ -124,7 +140,71 @@ Q2 = datKin.getQ2();
 electron_p = datKin.getElectronP();
 nucleon_p = datKin.getNucleonP();
 
-
-
+input_file = data_object::makeInputFileName();
 
 } // end data_object
+
+//destructor
+//no dynamically allocated memory or pointers
+data_object::~data_object(){}
+
+//Implement getter functions
+ int data_object::getRun(){ return run; }
+ 
+ TString data_object::getPass(){ return pass; }
+ 
+ TString data_object::getKinematic(){ return kinematic; }
+ 
+ TString data_object::getTarget(){ return target; }
+ 
+ int data_object::getSBSField(){ return sbs_field; }
+
+ double data_object::getBeamEnergy(){ return Ebeam; }
+ 
+ double data_object::getBBAngle_Deg(){ return bbtheta; }
+ 
+ double data_object::getBBAngle_Rad(){ return utility::DegToRad(bbtheta); }
+ 
+ double data_object::getBBDist(){ return bbdist; }
+ 
+ double data_object::getSBSAngle_Deg(){ return sbstheta; }
+ 
+ double data_object::getSBSAngle_Rad(){ return utility::DegToRad(sbstheta); }
+ 
+ double data_object::getSBSDist(){ return sbsdist; }
+
+ double data_object::getHCalAngle_Deg(){ return hcaltheta; }
+
+ double data_object::getHCalAngle_Rad(){ return utility::DegToRad(hcaltheta); }
+
+ double data_object::getHCalDist(){ return hcaldist; }
+
+ double data_object::getQ2(){ return Q2; }
+
+ double data_object::getElectronP(){ return electron_p; }
+
+ double data_object::getNucleonP(){ return nucleon_p; }
+
+ TString data_object::getInputFile(){ return input_file; }
+
+ void data_object::printRunInfo(){
+        cout << "-------------------------------------------------------------------------------------------------------------------------------------------------"        << endl
+             << Form("Run number: %i,",getRun())                        << endl
+             << Form("Kinematic: %s,",(getKinematic()).Data())          << endl
+             << Form("Target: %s,", (getTarget()).Data())               << endl
+             << Form("SBS Field: %i,",getSBSField())                    << endl
+             << Form("Beam Energy: %f,",getBeamEnergy())                << endl
+             << Form("BB angle in Degrees: %f,",getBBAngle_Deg())       << endl
+             << Form("BB angle in Radians: %f,",getBBAngle_Rad())       << endl
+             << Form("BB Distance: %f,",getBBDist())                    << endl
+             << Form("SBS angle in Degrees: %f,",getSBSAngle_Deg())     << endl
+             << Form("SBS angle in Radians: %f,",getSBSAngle_Rad())     << endl
+             << Form("SBS Distance: %f,",getSBSDist())                  << endl
+             << Form("HCal angle in Degress: %f,",getHCalAngle_Deg())   << endl
+             << Form("HCal angle in Radians: %f,",getHCalAngle_Rad())   << endl
+             << Form("HCal Distance: %f,",getHCalDist())                << endl
+             << Form("Q2: %f,",getQ2())                                 << endl
+             << Form("Electron p: %f,",getElectronP())                  << endl
+             << Form("Nucleon p: %f,",getNucleonP())                    << endl
+             << "-------------------------------------------------------------------------------------------------------------------------------------------------"        << endl;
+ }
