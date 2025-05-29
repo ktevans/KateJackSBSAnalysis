@@ -23,14 +23,10 @@
 #include "../src/utility.C"
 #include "../src/exp_constants.C"
 #include "../src/kinematic_obj.C"
-#include "../src/fits.C"
 #include "../src/data_object.C"
 #include "../src/cuts.C"
 #include "../src/physics.C"
 #include "../src/parse_config.C"
-#include "../src/plots.C"
-#include "../src/calc_FFs_RCS_obj.C"
-#include "../src/fit_histogram.C"
 
 //Main
 void data_elastic_parse(const char *setup_file_name){
