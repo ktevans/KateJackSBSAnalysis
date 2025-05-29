@@ -71,14 +71,60 @@ TString runnum_string = utility::intToTString(runnum);
 
 while(currentLine.ReadLine(datafile)){
   if(currentLine.BeginsWith(runnum_string)){
-    TObjArray *tokens = currentLine.Tokensize("  ");
+    TObjArray *tokens = currentLine.Tokensize(",");
     run = (((TObjString*) (*tokens)[0])->GetString()).Atoi();
     pass = ((TObjString*) (*tokens)[1])->GetString();
     kinematic = ((TObjString*) (*tokens)[2])->GetString();
     target = ((TObjString*) (*tokens)[3])->GetString();
     sbs_field = (((TObjString*) (*tokens)[4])->GetString()).Atoi();
-    // define other things from the data map?
+    // define other things from the data map? .Atof();
+
+    if(!(kinematic == Kin)){
+      cout << "Error: The run " << run << " has a mismatch in the kinematic, investigate what is going on!" << endl;
+      return;
+    }
+
+    if(!(sbs_field == SBS_field)){
+      cout << "Error: The run " << run << " has a mismatch in the sbs field, investigate what is going on!" << endl;
+      return;
+    }
+
+    if(!(target == targ)){
+      cout << "Error: The run " << run << " has a mismatch in the target, investigate what is going on!" << endl;
+      return;
+    }
+
+    if(!(pass == daPass)){
+      cout << "Error: The run " << run << " has a mismatch in the pass, investigate what is going on!" << endl;
+      return;
+    }
+
+    gotRun = true;
+
   } // end if line begins with runnum
+  else{
+    continue;
+  }
 } // end while reading lines
+
+if((datafile.eof()) && !gotRun){
+  cout << "Error:Did not find run number: " << runnum << " in the data file! Quitting, figure it out!" << endl;
+  return;
+}
+
+kinematic_obj datKin(kinematic_file_name, Kin);
+Ebeam = datKin.getBeamEnergy();
+bbtheta = datKin.getBBAngle_Deg();
+bbdist = datKin.getBBDist();
+sbstheta = datKin.SBSAngle_Deg();
+sbsdist = datKin.getSBSDist();
+hcaltheta = datKin.getHCalAngle_Deg();
+hcaldist = datKin.getHCalDist();
+Q2 = datKin.getQ2();
+electron_p = datKin.getElectronP();
+nucleon_p = datKin.getNucleonP();
+
+
+
 
 } // end data_object
