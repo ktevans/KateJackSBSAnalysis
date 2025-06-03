@@ -65,7 +65,7 @@ namespace exp_constants{
   //////Static Target/Scattering Chamber Parameters
   // target
   static const double l_tgt = 60.0; // Length of the target (cm)
-  static const double celldiameter = 1.6*2.54; //cm, this is to properly cancel units
+  static const double celldiameter = 1.15; //cm, this is to properly cancel units, found using a picture of one of the target cells
 
   // H2
   static const double lh2_rho_tgt = 0.0723; // Density of target (g/cc)
