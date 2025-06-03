@@ -30,17 +30,16 @@ namespace exp_constants{
   ////PASS2////
   static const double hcalblk_div_h = 0.15494;  //m, horizontal center-to-center dist.
   static const double hcalblk_div_v = 0.15875;  //m, vertical center-to-center dist.
-
   static const double hcalblk_div_hyp = 0.22183;//m, division corner-to-corner dist.
   static const double hcalblk_gap_h = 0.00254;  //m, horiz. gap bet. two blocks
   static const double hcalblk_gap_v = 0.00635;  //m, vert. gap bet. two blocks
  
   // Positions (mc)
   ////PASS2////
-  static const double hcalposXi_mc = -2.655;    //m, distance from beam center to top of HCal w/75cm offset
-  static const double hcalposXf_mc = 1.155;     //m, distance from beam center to bottom of HCal w/75cm offset
-  static const double hcalposYi_mc = -0.92964;  //m, distance from beam center to opposite-beam side of HCal
-  static const double hcalposYf_mc = 0.92964;   //m, distance from beam center to beam side of HCal
+  static const double hcalposXi_mc = -2.27563;    //m, center of top row blocks (from SBS-replay/DB_MC)
+  static const double hcalposXf_mc = 1.37562;     //m, center of bottom row blocks (from SBS-replay/DB_MC)
+  static const double hcalposYi_mc = -0.85217;    //m, center of right most blocks (from SBS-replay/DB_MC)
+  static const double hcalposYf_mc = 0.85217;     //m, center of left most blocks (from SBS-replay/DB_MC)
   
   // Pass0/1 (no block spacing)
   static const double hcalposXi_p0 = -2.16014;  //m, distance from beam center to top of HCal w/75cm offset
@@ -65,21 +64,21 @@ namespace exp_constants{
 
   //////Static Target/Scattering Chamber Parameters
   // target
-  static const double l_tgt = 15.0; // Length of the target (cm)
+  static const double l_tgt = 60.0; // Length of the target (cm)
   static const double celldiameter = 1.6*2.54; //cm, this is to properly cancel units
 
-  // LH2
+  // H2
   static const double lh2_rho_tgt = 0.0723; // Density of target (g/cc)
   static const double lh2_cthick = 0.02;       //cm, target cell thickness
   static const double lh2_uwallthick = 0.0145; //cm, upstream wall thickness
   static const double lh2_dwallthick = 0.015;  //cm, downstream wall thickness
   static const double lh2_dEdx = 0.00574; //According to NIST ESTAR, the collisional stopping power of hydrogen is about 5.74 MeV*cm2/g at 2 GeV energy  
+  static const double h2pressure = 1.013; //10 atm convert J/cm^3
+  static const double h2temp = 303; //Room temperature
 
-  // LD2
-  static const double ld2_rho_tgt = 0.169;      //g/cc, target density
-  static const double ld2_dEdx = 0.00581;      //According to https://open.library.ubc.ca/media/stream/pdf/831/1.0085416/1, pick up a factor of 1.012
-  static const double ld2_uwallthick = 0.0145; //cm, assume same as hydrogen for now
-  static const double ld2_dwallthick = 0.015;  //cm, assume same as hydrogen for now
+  // He3
+  static const double he3pressure = 1.013;  //10 atm convert J/cm^3 - This should be different for each target...
+  static const double he3temp = 305; // This seems wrong, He3 target was heated? Not 2deg above Room temp?
 
   //shielding
   static const double rho_Al = 2.7; // Density of aluminum windows (g/cc)
