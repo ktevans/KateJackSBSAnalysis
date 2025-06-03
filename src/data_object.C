@@ -90,9 +90,9 @@ while(currentLine.ReadLine(datafile)){
     TObjArray *tokens = currentLine.Tokensize(",");
     run = (((TObjString*) (*tokens)[0])->GetString()).Atoi();
     pass = ((TObjString*) (*tokens)[1])->GetString();
-    kinematic = ((TObjString*) (*tokens)[2])->GetString();
-    target = ((TObjString*) (*tokens)[3])->GetString();
-    sbs_field = (((TObjString*) (*tokens)[4])->GetString()).Atoi();
+    kinematic = ((TObjString*) (*tokens)[6])->GetString();
+    target = ((TObjString*) (*tokens)[5])->GetString();
+    sbs_field = (((TObjString*) (*tokens)[7])->GetString()).Atoi();
     // define other things from the data map? .Atof();
 
     if(!(kinematic == Kin)){
