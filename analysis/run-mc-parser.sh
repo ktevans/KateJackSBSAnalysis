@@ -9,6 +9,6 @@ file=$1
 
 myfile='"'$file'"'
 
-cd /w/halla-scshelf2102/sbs/ewertz/nTPE_analysis/analysis/gmn_ntpe
+cd /w/halla-scshelf2102/sbs/ktevans/KateJackSBSAnalysis/analysis
 
 root -l -b -q 'mc_parse.C('$myfile')'
