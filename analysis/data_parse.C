@@ -5,12 +5,12 @@
 
 //The exact ordering of this matters. ROOT for some reason cannot handle calls for files that have already been included. 
 #include "../src/utility.C"
-#include "../src/exp_constants.C"
-#include "../src/kinematic_obj.C"
-#include "../src/data_object.C"
-#include "../src/cuts.C"
-#include "../src/physics.C"
-#include "../src/parse_config.C"
+//#include "../src/exp_constants.C"
+//#include "../src/kinematic_obj.C"
+//#include "../src/data_object.C"
+//#include "../src/cuts.C"
+//#include "../src/physics.C"
+//#include "../src/parse_config.C"
 #include "TF1.h"
 #include "TChain.h"
 #include "TTree.h"
@@ -30,7 +30,7 @@
 
 //Main
 void data_parse(const char *setup_file_name){
-
+/*
   //Define a clock to check macro processing time
   TStopwatch *watch = new TStopwatch(); 
   watch->Start( kTRUE );
@@ -540,13 +540,13 @@ void data_parse(const char *setup_file_name){
 
 	//Calculate Mott cross section for this event
 	double Mott_CS = physics::getMott_CS(physics_constants::alpha,etheta,pcorr,Ecorr);
-		
+		*/
 	/* Can reconstruct e' momentum for downstream calculations differently:
 	* v1 - Use four-momentum member functions
  	* v2 - Use all available ekine (tree) vars and calculate vectors (should be the same as v1)
 	* v3 - Use reconstructed angles as independent qty (usually preferable given GEM precision at most kinematics)
  	* v4 - Use reconstructed momentum as independent qty */
-
+/*
 	
 	//four momentum transferred squared
 	double Q2; 
@@ -802,5 +802,5 @@ void data_parse(const char *setup_file_name){
    
   // Send time efficiency report to console
   cout << "CPU time elapsed = " << watch->CpuTime() << " s = " << watch->CpuTime()/60.0 << " min. Real time = " << watch->RealTime() << " s = " << watch->RealTime()/60.0 << " min." << endl;
-
+*/
 }//end Main
