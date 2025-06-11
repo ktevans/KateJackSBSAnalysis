@@ -13,8 +13,6 @@ TString data_object::makeInputFileName(){
 
   string input_directory = "/volatile/halla/sbs/sbs-gen/GEN_REPLAYS/pass2/TEST/try8";
   TString inputfile;
-  inputfile = "";
-/*
   const char *input_directory_char = input_directory.c_str();
   const char *pass_char = pass.Data();
   const char *kin_char = kinematic.Data();
@@ -71,7 +69,7 @@ TString data_object::makeInputFileName(){
   else{
     //make an error. Some how we got not pass 0,1, or 2
     cout << "Error: Pass variable was given that is not pass 0,1, or 2. It's actually pass " << pass << "! That's not a pass. Stupid." << endl;
-  } */
+  } 
 return inputfile;
 } // end makeInputFileName
 
