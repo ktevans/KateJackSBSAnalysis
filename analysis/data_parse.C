@@ -26,7 +26,7 @@
 //#include "../src/data_object.C"
 #include "../src/cuts.C"
 #include "../src/physics.C"
-//#include "../src/parse_config.C"
+#include "../src/parse_config.C"
 
 //Main
 void data_parse(const char *setup_file_name){
