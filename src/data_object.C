@@ -132,7 +132,7 @@ kinematic_obj datKin(kinematic_file_name, Kin);
 Ebeam = datKin.getBeamEnergy();
 bbtheta = datKin.getBBAngle_Deg();
 bbdist = datKin.getBBDist();
-sbstheta = datKin.SBSAngle_Deg();
+sbstheta = datKin.getSBSAngle_Deg();
 sbsdist = datKin.getSBSDist();
 hcaltheta = datKin.getHCalAngle_Deg();
 hcaldist = datKin.getHCalDist();
