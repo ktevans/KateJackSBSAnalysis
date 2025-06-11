@@ -22,14 +22,10 @@
 #include "../src/utility.C"
 #include "../src/exp_constants.C"
 #include "../src/kinematic_obj.C"
-#include "../src/fits.C"
 #include "../src/data_object.C"
 #include "../src/cuts.C"
 #include "../src/physics.C"
 #include "../src/parse_config.C"
-#include "../src/plots.C"
-#include "../src/calc_FFs_RCS_obj.C"
-#include "../src/fit_histogram.C"
 
 //Main
 void mc_parse(const char *setup_file_name){
@@ -45,7 +41,6 @@ parse_config mainConfig(setup_file_name);
 //store all the parameters from the mainConfig file into local variables. So we don't have to keep recalling them
 TString rootfile_dir = mainConfig.getRootFileDir();
 TString histfile_dir = mainConfig.getHistFileDir();
-TString replay_type = mainConfig.getReplayType();
 TCut globalcut = mainConfig.getGlobalCut();
 TString exp = mainConfig.getExp();
 TString kin = mainConfig.getKin();
@@ -95,7 +90,6 @@ double hcalfit_low = exp_constants::hcalposXi_mc; //lower fit/bin limit for hcal
 double hcalfit_high = exp_constants::hcalposXf_mc; //higher fit/bin limit for hcal dx plots.
 double hcal_fitrange = exp_constants::hcal_vrange; //Full range of hcal dx plots
 
-
 //store all important kinematic info in local variables
 kinematic_obj myKin(kinematic_file,kin);
 double Ebeam = myKin.getBeamEnergy();
@@ -105,20 +99,11 @@ double bbtheta = myKin.getBBAngle_Rad();
 double hcaltheta = myKin.getHCalAngle_Rad();
 double p_nuc_centr = myKin.getNucleonP();
 
-
 //setup hcal physical bounds that match database
 vector<double> hcalpos = cuts::hcal_Position_MC();
 
 //setup hcal active area with bounds that match database
 vector<double> hcalaa = cuts::hcal_ActiveArea_MC(1,1);
-
-//setup fiducial region based on dx and dy spot information
-vector<double> hcalfid = cuts::hcalfid(dxsig_p,dxsig_n,dysig_p,hcalaa,dxsig_p_fac,dysig_p_fac);
-
-//print out the information for the fid region
-  for(int k=0; k<hcalfid.size();k++){
-  cout <<"HCal Fid "<< k << " :" << hcalfid[k] << endl;
-  }
 
 //setup input file for the efficiency map
 TFile *eff_map_file = new TFile(HCal_Eff_map_file.Data());
@@ -144,98 +129,61 @@ vector<pair<string,vector<float>>> metadata_n;
 
 //Need to allow the MC parser to handle both LD2 and LH2 for MC file handling
 
-	if(target == "LD2"){
-		//Handle the LD2 MC files for the various types
-		if(replay_type == "jboyd"){
-		//find hist file first for proton
-		histFileNames_p = utility::findHistFiles(replay_type,histfile_dir,partial_name_p);
-		//This function is a bit tricky as it will modify both the root file and hist file vectors. Not my favorite way to do that
-		//In the end we should have a set of matching hist files and root files
-		utility::matchMCFiles(replay_type,histFileNames_p,rootFileNames_p,rootfile_dir);
-		//find hist file first for neutron
-		histFileNames_n = utility::findHistFiles(replay_type,histfile_dir,partial_name_n);
-		//Match hist and root files
-		utility::matchMCFiles(replay_type,histFileNames_n,rootFileNames_n,rootfile_dir);
-			//check to make number the number of hist and root files matches for protons and neutrons
-			if(rootFileNames_p.size() != histFileNames_p.size() || rootFileNames_n.size() != histFileNames_n.size()){
-        		cerr << "Error: File Matching failure, vector size mismatch!" << endl;
-        		}
-		}else if(replay_type == "jlab-HPC"){
-		//find information from CSV file and root file paths from generic sim replay output supported by jlab-HPC
-		//for proton
-		utility::SyncFilesCSV(histfile_dir,rootfile_dir,partial_name_p,rootFileNames_p,metadata_p);
-		//for neutron
-		utility::SyncFilesCSV(histfile_dir,rootfile_dir,partial_name_n,rootFileNames_n,metadata_n);
-		}else{
-		cout << "Error: MC file type not supported during. Replay Type: " << replay_type << " This needs fixing!" << endl;
-		}
-	}else if(target == "LH2"){
-		//Handle the LD2 MC files for the various types
-		if(replay_type == "jboyd"){
-                //find hist file first for proton
-		histFileNames_p = utility::findHistFiles(replay_type,histfile_dir,partial_name_p);
-		//This function is a bit tricky as it will modify both the root file and hist file vectors. Not my favorite way to do that
-                //In the end we should have a set of matching hist files and root files
-                utility::matchMCFiles(replay_type,histFileNames_p,rootFileNames_p,rootfile_dir);
-			//check to make number the number of hist and root files matches for protons
-                        if(rootFileNames_p.size() != histFileNames_p.size()){
-                        cerr << "Error: File Matching failure, vector size mismatch!" << endl;
-                        }
-		}else if(replay_type == "jlab-HPC"){
-		//find information from CSV file and root file paths from generic sim replay output supported by jlab-HPC
-                //for proton
-                utility::SyncFilesCSV(histfile_dir,rootfile_dir,partial_name_p,rootFileNames_p,metadata_p);
-		}else{
-                cout << "Error: MC file type not supported during. Replay Type: " << replay_type << " This needs fixing!" << endl;
-                }
-	}else {
+if(target == "LD2" || target == "He3")
+{
+	//find information from CSV file and root file paths from generic sim replay output supported by jlab-HPC
+	//for proton
+	utility::SyncFilesCSV(histfile_dir,rootfile_dir,partial_name_p,rootFileNames_p,metadata_p);
+	//for neutron
+	utility::SyncFilesCSV(histfile_dir,rootfile_dir,partial_name_n,rootFileNames_n,metadata_n);    
+}
+else if(target == "LH2" || target == "H2")
+{
+	//find information from CSV file and root file paths from generic sim replay output supported by jlab-HPC
+        //for proton
+        utility::SyncFilesCSV(histfile_dir,rootfile_dir,partial_name_p,rootFileNames_p,metadata_p);
+}
+else 
+{
 	cout << "Error: During MC file import. The target type: " << target << " is not supported. Resolve issue!" << endl;
-	}
+}
 //double check that we have the same number of files again
 int pFiles = 0;
 int nFiles = 0;
 
 //Need to allow the MC parser to handle both LD2 and LH2 for MC file handling
 
-	if(target == "LD2"){
-		//Continuing to make sure there exist both protons and neutrons. Make sure the job has a both a proton and neutron file. If not get rid of it
-		if(sync_jobs){
-			 //Function that searchs, finds, and then removes any files that are not in both proton and neutron vectors
-			if(replay_type == "jboyd"){
-			utility::syncJobNumbers(rootFileNames_p,rootFileNames_n);
-			pFiles = rootFileNames_p.size();
-			nFiles = rootFileNames_n.size();
-			}else if(replay_type == "jlab-HPC"){
-			//cout << metadata_p.size() << " " << metadata_n.size() << endl;
-			utility::syncJobNumbers(metadata_p,metadata_n);
-			pFiles = metadata_p.size();
-			nFiles = metadata_n.size();
-			}else{
-		  	cout << "Error: MC file type not supported during. Replay Type: " << replay_type << " This needs fixing!" << endl;
-			}
-
-		}	
+if(target == "LD2" || target == "He3")
+{
+	//Continuing to make sure there exist both protons and neutrons. Make sure the job has a both a proton and neutron file. If not get rid of it
+	if(sync_jobs)
+	{
+		//Function that searchs, finds, and then removes any files that are not in both proton and neutron vectors
+		//cout << metadata_p.size() << " " << metadata_n.size() << endl;
+		utility::syncJobNumbers(metadata_p,metadata_n);
+		pFiles = metadata_p.size();
+		nFiles = metadata_n.size();
+	}	
    
-		cout << endl << "Number of proton files " << pFiles << " , Number of neutron files " << nFiles << endl;
-		if(pFiles != nFiles){
+	cout << endl << "Number of proton files " << pFiles << " , Number of neutron files " << nFiles << endl;
+	if(pFiles != nFiles)
+	{
 		cout << endl << "Warning: Number proton and neutron root files loaded does not match. Investigate!" << endl << endl;
-			if(sync_jobs){
+		if(sync_jobs)
+		{
 			return;
-			}
 		}
-	}else if(target == "LH2"){
-		//Don't need to sync jobs. But do need to make sure the different replay types populate the number of files
-			if(replay_type == "jboyd"){
-                        pFiles = rootFileNames_p.size();
-                        }else if(replay_type == "jlab-HPC"){
-                        pFiles = metadata_p.size();
-                        }else{
-                        cout << "Error: MC file type not supported during. Replay Type: " << replay_type << " This needs fixing!" << endl;
-                        }
-
-	}else {
-        cout << "Error: During MC file import. The target type: " << target << " is not supported. Resolve issue!" << endl;
-        }
+	}
+}
+else if(target == "LH2" || target == "H2")
+{
+	//Don't need to sync jobs. But do need to make sure the different replay types populate the number of files
+	pFiles = metadata_p.size();
+}
+else 
+{
+	cout << "Error: During MC file import. The target type: " << target << " is not supported. Resolve issue!" << endl;
+}
 
 double dx_pn = mainConfig.get_dxpn();
 
@@ -416,7 +364,6 @@ double dx_pn = mainConfig.get_dxpn();
   Parse->Branch("p_N", &p_N_out, "p_N/D");
   Parse->Branch("p_central", &p_central_out, "p_centrial/D");
 
-
   Parse->Branch("num_hcal_clusid", &num_hcal_clusid_out, "num_hcal_clusid/I");
   Parse->Branch("hcal_clus_blk", &hcal_clus_blk_out, "hcal_clus_blk/I");
   Parse->Branch("nclus_hcal", &nclus_hcal_out,"nclus_hcal/I");
@@ -468,36 +415,46 @@ double dx_pn = mainConfig.get_dxpn();
   int is_proton = 0; //false
   int is_neutron = 0; //false
 
-  	//Conditional to handle the num_nuc depending on target
-  	if(target == "LD2"){
+  //Conditional to handle the num_nuc depending on target
+  if(target == "LD2" || target == "He3")
+  {
 	num_nuc = 2;	
-	}else if(target == "LH2"){
+  }
+  else if(target == "LH2" || target == "H2")
+  {
 	num_nuc = 1;
-	}else{
+  }
+  else
+  {
 	//stays default zero
 	cout << "Error: During event loop setup. The target type: " << target << " is not supported. Resolve issue!" << endl;	
-	}
+  }
 
   TChain *C = nullptr;
 
   //Main loop over nucleons (r==0 proton, r==1 neutron)
-  for(int r=0; r<num_nuc; r++){
+  for(int r=0; r<num_nuc; r++)
+  {
 
   	//update current nucleon
-  	if(r==0){
-	nuc = "p";
-	is_proton = 1;
-	is_neutron = 0;
-	num_files = pFiles;
-	}else if(r==1){
-	nuc = "n";
-	is_proton = 0;
-	is_neutron = 1;
-	num_files = nFiles;
+  	if(r==0)
+ 	{
+		nuc = "p";
+		is_proton = 1;
+		is_neutron = 0;
+		num_files = pFiles;
+	}
+	else if(r==1)
+	{
+		nuc = "n";
+		is_proton = 0;
+		is_neutron = 1;
+		num_files = nFiles;
 	}
 
 	//loop over simulation files for given iteration
-	for(int f=0; f<num_files; ++f){
+	for(int f=0; f<num_files; ++f)
+	{
 		string root_file;
 		string hist_file;
 		int Ntried,job_number,Nthrown;
@@ -506,79 +463,74 @@ double dx_pn = mainConfig.get_dxpn();
 		double max_weight = 0;
 		
 		//get information for MC weights
-		if(r==0){
-			
-			if(mc_override){
-			Ntried = mainConfig.getNTriedOverride();
-                	luminosity = mainConfig.getLumiOverride();
-                	genvol = mainConfig.getVolOverride();
-			}else if(replay_type == "jboyd"){
-			root_file = rootFileNames_p[f];
-			hist_file = histFileNames_p[f];
-			//need functions to search through the hist files and get the information we need
-			Ntried = (int) utility::searchSimcHistFile("Ntried",hist_file);
-                	luminosity = utility::searchSimcHistFile("luminosity",hist_file);
-                	genvol = utility::searchSimcHistFile("genvol",hist_file);
-			
-			}else if(replay_type == "jlab-HPC"){
-			root_file = metadata_p[f].first;
-
-			//Verify with CSV file structure
-			job_number = metadata_p[f].second[0];
-			Nthrown = metadata_p[f].second[1];
-			Ntried = metadata_p[f].second[2];		
-			genvol = metadata_p[f].second[3];
-			luminosity = metadata_p[f].second[4];
-			ebeam = metadata_p[f].second[5];
-			charge = metadata_p[f].second[6];
-			seed = metadata_p[f].second[7];
-				//Make sure we have conditional for old vs new files
-				if(metadata_p[f].second.size() > 8){
-				using_rej_samp = metadata_p[f].second[8];
-				max_weight = metadata_p[f].second[9];
-				weight_gt_max = metadata_p[f].second[10];
-				obs_max_weight = metadata_p[f].second[11];
-				}
-			}else{
-			cerr << "No MC weight information provided. Invesitgate this problem! No values assigned." << endl;
+		if(r==0)
+		{
+			if(mc_override)
+			{
+				Ntried = mainConfig.getNTriedOverride();
+                		luminosity = mainConfig.getLumiOverride();
+                		genvol = mainConfig.getVolOverride();
 			}
-		}else if(r==1){
-			if(mc_override){
-                        Ntried = mainConfig.getNTriedOverride();
-                        luminosity = mainConfig.getLumiOverride();
-                        genvol = mainConfig.getVolOverride();
-                        }else if(replay_type == "jboyd"){
-                        root_file = rootFileNames_n[f];
-                        hist_file = histFileNames_n[f];
-                        //need functions to search through the hist files and get the information we need
-			Ntried = (int) utility::searchSimcHistFile("Ntried",hist_file);
-                        luminosity = utility::searchSimcHistFile("luminosity",hist_file);
-                        genvol = utility::searchSimcHistFile("genvol",hist_file);
-
-                        }else if(replay_type == "jlab-HPC"){
-                        root_file = metadata_n[f].first;
-
-                        //Verify with CSV file structure
-			job_number = metadata_n[f].second[0];
-                        Nthrown = metadata_n[f].second[1];
-                        Ntried = metadata_n[f].second[2];
-                        genvol = metadata_n[f].second[3];
-                        luminosity = metadata_n[f].second[4];
-                        ebeam = metadata_n[f].second[5];
-                        charge = metadata_n[f].second[6];
-                        seed = metadata_n[f].second[7];
-			//Make sure we have conditional for old vs new files
-				if(metadata_n[f].second.size() > 8){
-                        	using_rej_samp = metadata_n[f].second[8];
-                        	max_weight = metadata_n[f].second[9];
-                       		weight_gt_max = metadata_n[f].second[10];
-                                obs_max_weight = metadata_n[f].second[11];
+			else if(replay_type == "jlab-HPC")
+			{
+				root_file = metadata_p[f].first;
+				//Verify with CSV file structure
+				job_number = metadata_p[f].second[0];
+				Nthrown = metadata_p[f].second[1];
+				Ntried = metadata_p[f].second[2];		
+				genvol = metadata_p[f].second[3];
+				luminosity = metadata_p[f].second[4];
+				ebeam = metadata_p[f].second[5];
+				charge = metadata_p[f].second[6];
+				seed = metadata_p[f].second[7];
+				//Make sure we have conditional for old vs new files
+				if(metadata_p[f].second.size() > 8)
+				{
+					using_rej_samp = metadata_p[f].second[8];
+					max_weight = metadata_p[f].second[9];
+					weight_gt_max = metadata_p[f].second[10];
+					obs_max_weight = metadata_p[f].second[11];
+				}
+			}
+			else
+			{
+				cerr << "No MC weight information provided. Invesitgate this problem! No values assigned." << endl;
+			}
+		}
+		else if(r==1)
+		{
+			if(mc_override)
+			{
+                        	Ntried = mainConfig.getNTriedOverride();
+                        	luminosity = mainConfig.getLumiOverride();
+                        	genvol = mainConfig.getVolOverride();
+                        }
+			else if(replay_type == "jlab-HPC")
+			{
+                        	root_file = metadata_n[f].first;
+                        	//Verify with CSV file structure
+				job_number = metadata_n[f].second[0];
+                        	Nthrown = metadata_n[f].second[1];
+                        	Ntried = metadata_n[f].second[2];
+                        	genvol = metadata_n[f].second[3];
+                        	luminosity = metadata_n[f].second[4];
+                        	ebeam = metadata_n[f].second[5];
+                        	charge = metadata_n[f].second[6];
+                        	seed = metadata_n[f].second[7];
+				//Make sure we have conditional for old vs new files
+				if(metadata_n[f].second.size() > 8)
+				{
+                        		using_rej_samp = metadata_n[f].second[8];
+                        		max_weight = metadata_n[f].second[9];
+                       			weight_gt_max = metadata_n[f].second[10];
+                                	obs_max_weight = metadata_n[f].second[11];
                                 }
-                        }else{
-                        cerr << "No MC weight information provided. Invesitgate this problem! No values assigned." << endl;
+                        }
+			else
+			{
+                        	cerr << "No MC weight information provided. Invesitgate this problem! No values assigned." << endl;
                         }
 		}
-
 		cout << "For this " << nuc << " file: Ntried = " << Ntried << " luminosity = " << luminosity << " genvol = " << genvol << " max weight " << max_weight << endl;
 
 		//add the file to the TChain
@@ -778,22 +730,22 @@ double dx_pn = mainConfig.get_dxpn();
 		//ttree formula variables
 		int treenum = 0, currenttreenum = 0;
 
-			//event loop 
-		while(C->GetEntry(nevent++)){
-		
+		//event loop 
+		while(C->GetEntry(nevent++))
+		{
 			//progress tracker
 			cout << "Processing " << nuc  << " file " << f << "/" << num_files << " event " << nevent << "/" << nentries << "\r";
         		cout.flush();
-
 			//single loop global cut
 			currenttreenum = C->GetTreeNumber();
-        		if( nevent == 1 || currenttreenum != treenum ){
-        		treenum = currenttreenum;
-        		GlobalCut->UpdateFormulaLeaves();
+        		if( nevent == 1 || currenttreenum != treenum )
+			{
+        			treenum = currenttreenum;
+        			GlobalCut->UpdateFormulaLeaves();
         		}
+
         		//Is true if failed global cut
 			bool failglobal = cuts::failedGlobal(GlobalCut);
-
 			///////////
 			//Electron-arm physics calculations
 
@@ -801,12 +753,11 @@ double dx_pn = mainConfig.get_dxpn();
         		double BB_E_over_p = (e_sh+e_ps)/tr_p[0];
 
 			//use the ebeam from the MC file if possible, if not will default to value from kinematic info
-			if((ebeam/1000) != -1 ){
-			Ebeam = ebeam/1000;
+			if((ebeam/1000) != -1 )
+			{
+				Ebeam = ebeam/1000;
 			}
 						
-
-
 			//correct beam energy from vertex information
 			double Eloss = physics::getEloss(tr_vz[0],target);
         		double Ecorr = physics::getEcorr(Ebeam,Eloss);
@@ -817,10 +768,11 @@ double dx_pn = mainConfig.get_dxpn();
 			//Vertex but for the MC true info
 			TVector3 vertex_mctrue_n = physics::getVertex(MC_true_vz);
 			
-			double pcorr = physics::getp_recon_corr(tr_p[0],Eloss_outgoing);
+			//double pcorr = physics::getp_recon_corr(tr_p[0],Eloss_outgoing);
+			double pcorr = tr_p[0];
 
 			//four momentum vector for electron beam with correted Energy value
-			TLorentzVector pbeam = physics::getpBeam(Ecorr);
+			TLorentzVector pbeam = physics::getpBeam(Ebeam);
 
 			//four momentum for scattered electron based on reconstruction
 			TLorentzVector p_eprime = physics::getp_eprime(tr_px[0],tr_py[0],tr_pz[0],tr_p[0],pcorr);
@@ -861,7 +813,7 @@ double dx_pn = mainConfig.get_dxpn();
 			double phi_N_exp = physics::get_phinucleon(ephi,physics_constants::PI);
 
 			//Calculate Mott cross section for this event
-			double Mott_CS = physics::getMott_CS(physics_constants::alpha,etheta,pcorr,Ecorr);
+			double Mott_CS = physics::getMott_CS(physics_constants::alpha,etheta,pcorr,Ebeam);
 
 			/* Can reconstruct e' momentum for downstream calculations differently:
 			* v1 - Use four-momentum member functions
@@ -904,10 +856,10 @@ double dx_pn = mainConfig.get_dxpn();
                         double W2_mctrue_n = physics::getW2(pbeam,p_mctrue_n,Q2_mctrue_n,target);
                         double tau_mctrue_n = physics::get_tau(Q2_mctrue_n,target);
                         double epsilon_mctrue_n = physics::get_epsilon(tau_mctrue_n,theta_mctrue_n);
-			
 	
-				//conditional to determine remaining e-arm related calculations.
-				if(e_method == 1){
+			//conditional to determine remaining e-arm related calculations.
+			if(e_method == 1)
+			{
 				//v1
 				Q2 = physics::getQ2(q);
                 		p_N = physics::get_pN(q,p_targ);
@@ -915,9 +867,10 @@ double dx_pn = mainConfig.get_dxpn();
                 		nu = physics::getnu(q);
                 		W2 = physics::getW2(p_N);
                 		tau = physics::get_tau(Q2,target);
-                		epsilon = physics::get_epsilon(tau,etheta);
-			
-				}else if(e_method == 2){
+                		epsilon = physics::get_epsilon(tau,etheta);			
+			}
+			else if(e_method == 2)
+			{
 				//v2
 				Q2 = physics::getQ2(ekine_Q2);
                 		W2 = physics::getW2(ekine_W2);
@@ -927,9 +880,10 @@ double dx_pn = mainConfig.get_dxpn();
                 		p_Nhat = physics::get_pNhat(theta_N_exp,phi_N_exp);
                 		p_N = physics::get_pN(p_N_exp,p_Nhat,nu,p_targ);
                 		tau = physics::get_tau(Q2,target);
-               			epsilon = physics::get_epsilon(tau,etheta);
-				
-				}else if(e_method == 3){
+               			epsilon = physics::get_epsilon(tau,etheta);	
+			}
+			else if(e_method == 3)
+			{
 				//v3
 				Q2 = physics::getQ2(pbeam,p_eprime,etheta);
                 		nu = physics::getnu(pbeam,pcentral);
@@ -940,8 +894,9 @@ double dx_pn = mainConfig.get_dxpn();
                 		W2 = physics::getW2(pbeam,p_eprime,Q2,target);
                 		tau = physics::get_tau(Q2,target);
                 		epsilon = physics::get_epsilon(tau,etheta);
-
-				}else if(e_method == 4){
+			}
+			else if(e_method == 4)
+			{
 				//v4
 				Q2 = physics::getQ2(pbeam,p_eprime,etheta);
                 		nu = physics::getnu(pbeam,p_eprime);
@@ -952,8 +907,9 @@ double dx_pn = mainConfig.get_dxpn();
                 		W2 = physics::getW2(pbeam,p_eprime,Q2,target);
                 		tau = physics::get_tau(Q2,target);
                 		epsilon = physics::get_epsilon(tau,etheta);
-
-				}else{
+			}
+			else
+			{
 				//Error handling, default version 3
 				cout << "Warning: Method for calculating e-arm physics was not included. Defaulting to method 3." << endl;
                 		Q2 = physics::getQ2(pbeam,p_eprime,etheta);
@@ -965,216 +921,220 @@ double dx_pn = mainConfig.get_dxpn();
                 		W2 = physics::getW2(pbeam,p_eprime,Q2,target);
                 		tau = physics::get_tau(Q2,target);
                 		epsilon = physics::get_epsilon(tau,etheta);
+			}
 
-				}
+			// ray from Hall origin onto the face of hcal where the nucleon hit
+			TVector3 hcal_intersect = physics::get_hcalintersect(vertex,hcal_origin,hcal_zaxis,p_Nhat);
 
-				// ray from Hall origin onto the face of hcal where the nucleon hit
-				TVector3 hcal_intersect = physics::get_hcalintersect(vertex,hcal_origin,hcal_zaxis,p_Nhat );
-
-				//HCal intersect but from quantities derived from MC truth information
-				TVector3 hcal_intersect_mctrue_n = physics::get_hcalintersect(vertex_mctrue_n,hcal_origin,hcal_zaxis,p_Nhat_mctrue_n);
+			//HCal intersect but from quantities derived from MC truth information
+			TVector3 hcal_intersect_mctrue_n = physics::get_hcalintersect(vertex_mctrue_n,hcal_origin,hcal_zaxis,p_Nhat_mctrue_n);
 				
-				//gets expected location of scattered nucleon assuming straight line projections from BB track, x-direction
-				double xhcal_expect = physics::get_xhcalexpect(hcal_intersect,hcal_origin,hcal_xaxis);
+			//gets expected location of scattered nucleon assuming straight line projections from BB track, x-direction
+			double xhcal_expect = physics::get_xhcalexpect(hcal_intersect,hcal_origin,hcal_xaxis);
 
-				//gets expected location of scattered nucleon assuming straight line projections from BB track, y-direction
-				double yhcal_expect = physics::get_yhcalexpect(hcal_intersect,hcal_origin,hcal_yaxis);
+			//gets expected location of scattered nucleon assuming straight line projections from BB track, y-direction
+			double yhcal_expect = physics::get_yhcalexpect(hcal_intersect,hcal_origin,hcal_yaxis);
 
-				//Now calculate x_expect and y_expect with the MC derived truth info
-				double xhcal_mctrue_n = physics::get_xhcalexpect(hcal_intersect_mctrue_n,hcal_origin,hcal_xaxis);
-				//Because of coordinate system difference
-				xhcal_mctrue_n = -xhcal_mctrue_n;
-				double yhcal_mctrue_n = physics::get_yhcalexpect(hcal_intersect_mctrue_n,hcal_origin,hcal_yaxis);
-				
-
-				//Calculate expected proton deflection with a somewhat crude module
-        			double BdL = physics::getBdL(sbs_field,kin,pass);
-        			double proton_deflection = physics::get_protonDeflection(BdL,p_N.Vect().Mag(),hcaldist,sbsdist);
-				double proton_deflection_mctrue_n = physics::get_protonDeflection(BdL,p_N_mctrue_n.Vect().Mag(),hcaldist,sbsdist);
-
-				//supposedly the MC does timing poorly. So implementing an intime clustering algorithm for MC is not the best idea. Just do a highest energy cluster search to be sure.
-				int energy_idx = physics::cluster_HighEnergy(num_hcal_clusid,hcal_clus_e);
-
-				//Assume the highest energy cluster sort is sufficient to find the best cluster
-				int clus_idx_best = energy_idx;
+			//Now calculate x_expect and y_expect with the MC derived truth info
+			double xhcal_mctrue_n = physics::get_xhcalexpect(hcal_intersect_mctrue_n,hcal_origin,hcal_xaxis);
+			//Because of coordinate system difference
+			xhcal_mctrue_n = -xhcal_mctrue_n;
+			double yhcal_mctrue_n = physics::get_yhcalexpect(hcal_intersect_mctrue_n,hcal_origin,hcal_yaxis);
 				
 
-				//calculate important information
-				double xhcal_bestclus = hcal_clus_x[clus_idx_best];
-        			double yhcal_bestclus = hcal_clus_y[clus_idx_best];
-        			double dx_bestclus = physics::get_dx(xhcal_bestclus,xhcal_expect);
-        			double dy_bestclus = physics::get_dy(yhcal_bestclus,yhcal_expect);
-        			double hcal_atime_bestclus = hcal_clus_atime[clus_idx_best];
-        			double coin_bestclus = hcal_atime_bestclus - atime_sh;
-        			double coin_pclus = hcal_clus_atime[0] - atime_sh;
-        			double hcal_e_bestclus = hcal_clus_e[clus_idx_best];
-				int hcal_nblk_bestclus = (int) hcal_clus_nblk[clus_idx_best];
+			//Calculate expected proton deflection with a somewhat crude module
+        		double BdL = physics::getBdL(sbs_field,kin,pass);
+        		double proton_deflection = physics::get_protonDeflection(BdL,p_N.Vect().Mag(),hcaldist,sbsdist);
+			double proton_deflection_mctrue_n = physics::get_protonDeflection(BdL,p_N_mctrue_n.Vect().Mag(),hcaldist,sbsdist);
 
-				//Check on the MC truth info by calculating dx and dy
-				double dx_mctrue_n = physics::get_dx(xhcal_bestclus,xhcal_mctrue_n);
-                                double dy_mctrue_n = physics::get_dy(yhcal_bestclus,yhcal_mctrue_n);
+			//supposedly the MC does timing poorly. So implementing an intime clustering algorithm for MC is not the best idea. Just do a highest energy cluster search to be sure.
+			int energy_idx = physics::cluster_HighEnergy(num_hcal_clusid,hcal_clus_e);
 
-				//calculate the number of sigma away from fiducial boundaries. Store info for later
-        			double nsigx_fid = cuts::calculate_nsigma_fid_x(xhcal_expect,dxsig_p,dxsig_n,dx_pn,hcalaa);
-        			double nsigy_fid = cuts::calculate_nsigma_fid_y(yhcal_expect,dysig_p,hcalaa);
+			//Assume the highest energy cluster sort is sufficient to find the best cluster
+			int clus_idx_best = energy_idx;
 				
-				//setup booleans for cuts later. Save boolean values to tree
 
-				//HCal active area
-				bool hcalaa_ON = cuts::hcalaa_ON(xhcal_bestclus,yhcal_bestclus,hcalaa);
+			//calculate important information
+			double xhcal_bestclus = hcal_clus_x[clus_idx_best];
+        		double yhcal_bestclus = hcal_clus_y[clus_idx_best];
+        		double dx_bestclus = physics::get_dx(xhcal_bestclus,xhcal_expect);
+        		double dy_bestclus = physics::get_dy(yhcal_bestclus,yhcal_expect);
+        		double hcal_atime_bestclus = hcal_clus_atime[clus_idx_best];
+        		double coin_bestclus = hcal_atime_bestclus - atime_sh;
+        		double coin_pclus = hcal_clus_atime[0] - atime_sh;
+        		double hcal_e_bestclus = hcal_clus_e[clus_idx_best];
+			int hcal_nblk_bestclus = (int) hcal_clus_nblk[clus_idx_best];
 
-				//W2 elastic boolean
-				bool goodW2 = cuts::goodW2(W2,W2_low,W2_high);
+			//Check on the MC truth info by calculating dx and dy
+			double dx_mctrue_n = physics::get_dx(xhcal_bestclus,xhcal_mctrue_n);
+                        double dy_mctrue_n = physics::get_dy(yhcal_bestclus,yhcal_mctrue_n);
 
-				//good dy boolean
-				bool good_dy = cuts::good_dy(dy_bestclus,dyO_p,dysig_cut_fac,dysig_cut);
-
-				//good coincidence time cut. MC timing is poor do not implement this cut.
-				//bool passCoin = cuts::passCoin(coin_pclus,coin_mean,coin_sig_fac,coin_profile_sig);
-
-				//good fiducial cut
-				bool passFid = cuts::hcalfid_IN(xhcal_expect,yhcal_expect,dx_pn,hcalfid);
-
-				//pass HCal E
-				bool passHCalE = cuts::passHCalE(hcal_e_bestclus,hcalemin);
+			//calculate the number of sigma away from fiducial boundaries. Store info for later
+        		double nsigx_fid = cuts::calculate_nsigma_fid_x(xhcal_expect,dxsig_p,dxsig_n,dx_pn,hcalaa);
+        		double nsigy_fid = cuts::calculate_nsigma_fid_y(yhcal_expect,dysig_p,hcalaa);
 				
-				//pass HCal num clus
-				bool passHCal_Nclus = cuts::passHCal_NClus(nclus_hcal,hcalnclusmin);
+			//setup booleans for cuts later. Save boolean values to tree
 
-				//pass NSig Fid check
-        			bool passNSigFid = cuts::passNsigFid(nsigx_fid,nsigy_fid);
+			//HCal active area
+			bool hcalaa_ON = cuts::hcalaa_ON(xhcal_bestclus,yhcal_bestclus,hcalaa);
 
-				//calculate the final corrected MC weight
-				//handles both cases of using rejection sampling and not 
-				double uncorr_mc_weight;
-				double corr_mc_weight;
-				if(using_rej_samp){
+			//W2 elastic boolean
+			bool goodW2 = cuts::goodW2(W2,W2_low,W2_high);
+
+			//good dy boolean
+			bool good_dy = cuts::good_dy(dy_bestclus,dyO_p,dysig_cut_fac,dysig_cut);
+
+			//good coincidence time cut. MC timing is poor do not implement this cut.
+			//bool passCoin = cuts::passCoin(coin_pclus,coin_mean,coin_sig_fac,coin_profile_sig);
+
+			//good fiducial cut
+			//bool passFid = cuts::hcalfid_IN(xhcal_expect,yhcal_expect,dx_pn,hcalfid);
+
+			//pass HCal E
+			bool passHCalE = cuts::passHCalE(hcal_e_bestclus,hcalemin);
+				
+			//pass HCal num clus
+			bool passHCal_Nclus = cuts::passHCal_NClus(nclus_hcal,hcalnclusmin);
+
+			//pass NSig Fid check
+        		//bool passNSigFid = cuts::passNsigFid(nsigx_fid,nsigy_fid);
+
+			//calculate the final corrected MC weight
+			//handles both cases of using rejection sampling and not 
+			double uncorr_mc_weight;
+			double corr_mc_weight;
+			if(using_rej_samp)
+			{
 				uncorr_mc_weight = physics::getMCWeight(max_weight,luminosity,genvol,Ntried);
-				}else{
+			}
+			else
+			{
 				uncorr_mc_weight = physics::getMCWeight(mc_weight,luminosity,genvol,Ntried);
-				}
+			}
 				
-				//If a efficiency map correction is involved apply it to the final_mc_weight
+			//If a efficiency map correction is involved apply it to the final_mc_weight
 				
-				double corr_fac = 0.0;
+			double corr_fac = 0.0;
 
-				//Temp change to check what happens if we only altered just the proton files
-				if(HCal_Eff_map_flag){
+			//Temp change to check what happens if we only altered just the proton files
+			if(HCal_Eff_map_flag)
+			{
 				//if(HCal_Eff_map_flag && r==0){
-
 				corr_fac = physics::get_HCalEffCorr(xy_expect_eff_map_clone,xhcal_mctrue_n,yhcal_mctrue_n,HCal_accep_avg_eff,proton_deflection_mctrue_n,mc_fnucl);
 				corr_mc_weight = uncorr_mc_weight * corr_fac;
-				}else{
+			}
+			else
+			{
 				corr_mc_weight = uncorr_mc_weight;
-				}
+			}
 
-				//Fill analysis tree variables before making cuts
-				dx_out = dx_bestclus;
-        			dy_out = dy_bestclus;
-        			xexp_out = xhcal_expect;
-        			yexp_out = yhcal_expect;
-        			xhcal_out = xhcal_bestclus;
-        			yhcal_out = yhcal_bestclus;
-        			W2_out = W2;
-        			Q2_out = Q2;
-        			nu_out = nu;
-        			tau_out = tau;
-        			epsilon_out = epsilon;
-        			pcorr_out = pcorr;
-				mott_out = Mott_CS;
-        			ehcal_out = hcal_e_bestclus;
-				ehcal_tree_out = e_hcal;
-				BBtot_e_out = e_sh+e_ps;
-        			BBsh_e_out = e_sh;
-        			BBps_e_out = e_ps;
-        			hcal_atime_out = hcal_atime_bestclus;
-        			BBsh_atime_out = atime_sh;
-        			BBps_atime_out = atime_ps;
-        			BBgem_nhits_out = gem_hits[0];
-        			BBgem_ngoodhits_out = gem_goodhits[0];
-        			BBgem_chi2ndf_out = gem_ChiSqr[0];
-				BBtr_x_out = tr_x[0];
-        			BBtr_y_out = tr_y[0];
-        			BBtr_p_out = tr_p[0];
-        			BBtr_vz_out = tr_vz[0];
-				BB_E_over_p_out = BB_E_over_p;
-				BBtr_th_out = tr_th[0];
-        			BBtr_ph_out = tr_ph[0];
-        			BBtr_r_x_out = tr_r_x[0];
-        			BBtr_r_y_out = tr_r_y[0];
-        			BBtr_r_th_out = tr_r_th[0];
-        			BBtr_r_ph_out = tr_r_ph[0];
-				dyO_p_out = dyO_p;
-        			dyO_n_out = dyO_n;
-        			dysig_p_out = dysig_p;
-        			dysig_n_out = dysig_n;
-        			dysig_n_fac_out = dysig_n_fac;
-        			dysig_p_fac_out = dysig_p_fac;
-        			dxO_p_out = dxO_p;
-        			dxO_n_out = dxO_n;
-        			dxsig_p_out = dxsig_p;
-        			dxsig_n_out = dxsig_n;
-        			dxsig_n_fac_out = dxsig_n_fac; 
-				dxsig_p_fac_out = dxsig_p_fac;
-        			nsigx_fid_out = nsigx_fid;
-        			nsigy_fid_out = nsigy_fid;
-				W2low_out = W2_low;
-        			W2high_out = W2_high;
-        			num_hcal_clusid_out = num_hcal_clusid ;
-        			hcal_clus_blk_out = hcal_nblk_bestclus;
-        			nclus_hcal_out = nclus_hcal;
-        			BBsh_nclus_out = (int) nclus_sh;
-        			BBsh_nblk_out = (int) nblk_sh;
-        			BBps_nclus_out = (int) nclus_ps;
-        			BBps_nblk_out = (int) nblk_ps;
-        			BBtr_n_out = ntrack;
-        			passGlobal_out = (int) !failglobal;
-        			HCalON_out = (int) hcalaa_ON;
-        			passW2_out = (int) goodW2;
-        			passFid_out = (int) passFid;
-        			file_out = f;
-        			mag_out = sbs_field;
-				uncorr_mc_weight_out = uncorr_mc_weight;
-				corr_mc_weight_out = corr_mc_weight;
-				is_proton_out = is_proton;
-				is_neutron_out = is_neutron;
-				hcal_sh_atime_diff_out = coin_bestclus;
-        			proton_deflection_out = proton_deflection;
-      				p_N_out = p_N.Vect().Mag();
-        			p_central_out = pcentral;
-        			nblkHCAL_out = nblkHCAL;
-        			rowblkHCAL_out = rowblkHCAL[clus_idx_best];
-        			colblkHCAL_out = colblkHCAL[clus_idx_best];
-				MC_p_n_out = MC_true_p_n;
-				MC_p_e_out = MC_true_p_e;
-				MC_vz_out = MC_true_vz;
+			//Fill analysis tree variables before making cuts
+			dx_out = dx_bestclus;
+        		dy_out = dy_bestclus;
+        		xexp_out = xhcal_expect;
+        		yexp_out = yhcal_expect;
+        		xhcal_out = xhcal_bestclus;
+        		yhcal_out = yhcal_bestclus;
+        		W2_out = W2;
+        		Q2_out = Q2;
+        		nu_out = nu;
+			tau_out = tau;
+         		epsilon_out = epsilon;
+        		pcorr_out = pcorr;
+			mott_out = Mott_CS;
+        		ehcal_out = hcal_e_bestclus;
+			ehcal_tree_out = e_hcal;
+			BBtot_e_out = e_sh+e_ps;
+        		BBsh_e_out = e_sh;
+        		BBps_e_out = e_ps;
+        		hcal_atime_out = hcal_atime_bestclus;
+        		BBsh_atime_out = atime_sh;
+        		BBps_atime_out = atime_ps;
+        		BBgem_nhits_out = gem_hits[0];
+        		BBgem_ngoodhits_out = gem_goodhits[0];
+        		BBgem_chi2ndf_out = gem_ChiSqr[0];
+			BBtr_x_out = tr_x[0];
+        		BBtr_y_out = tr_y[0];
+        		BBtr_p_out = tr_p[0];
+        		BBtr_vz_out = tr_vz[0];
+			BB_E_over_p_out = BB_E_over_p;
+			BBtr_th_out = tr_th[0];
+        		BBtr_ph_out = tr_ph[0];
+        		BBtr_r_x_out = tr_r_x[0];
+        		BBtr_r_y_out = tr_r_y[0];
+        		BBtr_r_th_out = tr_r_th[0];
+        		BBtr_r_ph_out = tr_r_ph[0];
+			dyO_p_out = dyO_p;
+        		dyO_n_out = dyO_n;
+        		dysig_p_out = dysig_p;
+        		dysig_n_out = dysig_n;
+        		dysig_n_fac_out = dysig_n_fac;
+        		dysig_p_fac_out = dysig_p_fac;
+        		dxO_p_out = dxO_p;
+        		dxO_n_out = dxO_n;
+        		dxsig_p_out = dxsig_p;
+        		dxsig_n_out = dxsig_n;
+        		dxsig_n_fac_out = dxsig_n_fac; 
+			dxsig_p_fac_out = dxsig_p_fac;
+        		nsigx_fid_out = nsigx_fid;
+        		nsigy_fid_out = nsigy_fid;
+			W2low_out = W2_low;
+        		W2high_out = W2_high;
+        		num_hcal_clusid_out = num_hcal_clusid ;
+        		hcal_clus_blk_out = hcal_nblk_bestclus;
+        		nclus_hcal_out = nclus_hcal;
+        		BBsh_nclus_out = (int) nclus_sh;
+        		BBsh_nblk_out = (int) nblk_sh;
+        		BBps_nclus_out = (int) nclus_ps;
+        		BBps_nblk_out = (int) nblk_ps;
+        		BBtr_n_out = ntrack;
+        		passGlobal_out = (int) !failglobal;
+        		HCalON_out = (int) hcalaa_ON;
+        		passW2_out = (int) goodW2;
+        		//passFid_out = (int) passFid;
+        		file_out = f;
+        		mag_out = sbs_field;
+			uncorr_mc_weight_out = uncorr_mc_weight;
+			corr_mc_weight_out = corr_mc_weight;
+			is_proton_out = is_proton;
+			is_neutron_out = is_neutron;
+			hcal_sh_atime_diff_out = coin_bestclus;
+        		proton_deflection_out = proton_deflection;
+      			p_N_out = p_N.Vect().Mag();
+        		p_central_out = pcentral;
+        		nblkHCAL_out = nblkHCAL;
+        		rowblkHCAL_out = rowblkHCAL[clus_idx_best];
+        		colblkHCAL_out = colblkHCAL[clus_idx_best];
+			MC_p_n_out = MC_true_p_n;
+			MC_p_e_out = MC_true_p_e;
+			MC_vz_out = MC_true_vz;
 
-				x_mctrue_n_out = xhcal_mctrue_n;
-				y_mctrue_n_out = yhcal_mctrue_n;
-				p_mctrue_n_out = p_mctrue_n.Vect().Mag();
-				q_mctrue_n_out = q_mctrue_n.Vect().Mag();
-				theta_mctrue_n_out = theta_mctrue_n;
-				phi_N_exp_out = phi_N_exp;
-				phi_mctrue_n_out = phi_mctrue_n;
-				pcentral_mctrue_n_out = pcentral_mctrue_n;
-				Q2_mctrue_n_out = Q2_mctrue_n;
-				nu_mctrue_n_out = nu_mctrue_n;
-				theta_N_exp_out = theta_N_exp;
-				p_Nhat_mctrue_n_out = p_Nhat_mctrue_n.Mag2();
-				p_N_mctrue_n_out = p_N_mctrue_n.Vect().Mag();
-				W2_mctrue_n_out = W2_mctrue_n;
-				p_Nhat_out = p_Nhat.Mag2();
-				tau_mctrue_n_out = tau_mctrue_n;
-				epsilon_mctrue_n_out = epsilon_mctrue_n;
-				hcal_intersect_out = hcal_intersect.Mag2();
-				hcal_intersect_mctrue_n_out = hcal_intersect_mctrue_n.Mag2();
-				corr_fac_out = corr_fac;
+			x_mctrue_n_out = xhcal_mctrue_n;
+			y_mctrue_n_out = yhcal_mctrue_n;
+			p_mctrue_n_out = p_mctrue_n.Vect().Mag();
+			q_mctrue_n_out = q_mctrue_n.Vect().Mag();
+			theta_mctrue_n_out = theta_mctrue_n;
+			phi_N_exp_out = phi_N_exp;
+			phi_mctrue_n_out = phi_mctrue_n;
+			pcentral_mctrue_n_out = pcentral_mctrue_n;
+			Q2_mctrue_n_out = Q2_mctrue_n;
+			nu_mctrue_n_out = nu_mctrue_n;
+			theta_N_exp_out = theta_N_exp;
+			p_Nhat_mctrue_n_out = p_Nhat_mctrue_n.Mag2();
+			p_N_mctrue_n_out = p_N_mctrue_n.Vect().Mag();
+			W2_mctrue_n_out = W2_mctrue_n;
+			p_Nhat_out = p_Nhat.Mag2();
+			tau_mctrue_n_out = tau_mctrue_n;
+			epsilon_mctrue_n_out = epsilon_mctrue_n;
+			hcal_intersect_out = hcal_intersect.Mag2();
+			hcal_intersect_mctrue_n_out = hcal_intersect_mctrue_n.Mag2();
+			corr_fac_out = corr_fac;
 
-				dx_mctrue_n_out = dx_mctrue_n;
-				dy_mctrue_n_out = dy_mctrue_n;
+			dx_mctrue_n_out = dx_mctrue_n;
+			dy_mctrue_n_out = dy_mctrue_n;
 				
-				//Fill the analysis tree
-				Parse->Fill();
+			//Fill the analysis tree
+			Parse->Fill();
 		}//end event loop
 		C->Reset();
 	}//end loop simulation
