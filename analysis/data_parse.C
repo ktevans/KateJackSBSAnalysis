@@ -29,7 +29,7 @@
 #include "../src/parse_config.C"
 
 //Main
-void data_elastic_parse(const char *setup_file_name){
+void data_parse(const char *setup_file_name){
 
   //Define a clock to check macro processing time
   TStopwatch *watch = new TStopwatch(); 
