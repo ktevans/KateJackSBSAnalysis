@@ -30,7 +30,7 @@
 
 //Main
 void data_parse(const char *setup_file_name){
-
+/*
   //Define a clock to check macro processing time
   TStopwatch *watch = new TStopwatch(); 
   watch->Start( kTRUE );
@@ -801,5 +801,5 @@ void data_parse(const char *setup_file_name){
    
   // Send time efficiency report to console
   cout << "CPU time elapsed = " << watch->CpuTime() << " s = " << watch->CpuTime()/60.0 << " min. Real time = " << watch->RealTime() << " s = " << watch->RealTime()/60.0 << " min." << endl;
-
+*/
 }//end Main
