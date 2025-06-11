@@ -275,11 +275,11 @@ namespace physics{
  double get_pNexp(double nu,TString target){
  double p_N_exp;
  	 //LH2
-	 if(target == "LH2"){
+	 if(target == "LH2" || target == "H2"){
          p_N_exp = sqrt(pow(nu,2) + 2.0 * physics_constants::M_p * nu);
          //LD2
          //For Quasi-elastic scattering Dummy should be like deutreium
-	 }else if(target == "LD2"||target == "Dummy"){
+	 }else if(target == "LD2"||target == "Dummy" || target == "He3"){
          double Nmass = 0.5*(physics_constants::M_p+physics_constants::M_n);
          p_N_exp = sqrt(pow(nu,2) + 2.0 * Nmass * nu);
          }else{
@@ -310,11 +310,11 @@ namespace physics{
  double getW2(TLorentzVector pbeam,TLorentzVector p_eprime, double Q2, TString target){
  double W2;
 	//LH2
-	if(target == "LH2" ){
+	if(target == "LH2" || target == "H2"){
 	W2 = pow(physics_constants::M_p,2)+2.0*physics_constants::M_p*(pbeam.E() - p_eprime.E())-Q2;
 	//LD2
 	//For Quasi-elastic scattering dummy should be like deuterium
-	}else if(target == "LD2"|| target == "Dummy"){
+	}else if(target == "LD2"|| target == "Dummy" || target == "He3"){
         double Nmass = 0.5*(physics_constants::M_p+physics_constants::M_n);
         W2 = pow(Nmass,2)+2.0*Nmass*(pbeam.E() - p_eprime.E())-Q2;
         }else{
