@@ -729,9 +729,9 @@
 
   TString parse_config::get_HCalEffMapFile(){return HCal_Eff_map_file;}
 
-  TString parse_config::get_Comp_file_1(){return Comp_file_1;}
+  //TString parse_config::get_Comp_file_1(){return Comp_file_1;}
 
-  TString parse_config::get_Comp_file_2(){return Comp_file_2;}
+  //TString parse_config::get_Comp_file_2(){return Comp_file_2;}
 
   TString parse_config::get_kin_1(){return kin_1;}
 
