@@ -76,7 +76,7 @@ return inputfile;
 } // end makeInputFileName
 
 data_object::data_object(int runnum, const char *data_file_name, const char *kinematic_file_name, TString Kin, TString SBS_field, TString targ, TString daPass){
-
+/*
 ifstream datafile(data_file_name);
 
 if(datafile.fail()){
@@ -144,7 +144,7 @@ electron_p = datKin.getElectronP();
 nucleon_p = datKin.getNucleonP();
 
 input_file = data_object::makeInputFileName();
-
+*/
 } // end data_object
 
 //destructor
