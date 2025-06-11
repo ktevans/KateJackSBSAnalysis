@@ -87,7 +87,7 @@ TString runnum_string = utility::intToTString(runnum);
 
 while(currentLine.ReadLine(datafile)){
   if(currentLine.BeginsWith(runnum_string)){
-    TObjArray *tokens = currentLine.Tokensize(" ");
+    TObjArray *tokens = currentLine.Tokenize(",");
     run = (((TObjString*) (*tokens)[0])->GetString()).Atoi();
     pass = ((TObjString*) (*tokens)[1])->GetString();
     kinematic = ((TObjString*) (*tokens)[6])->GetString();
