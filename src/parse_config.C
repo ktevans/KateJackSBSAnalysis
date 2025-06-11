@@ -65,6 +65,11 @@
              {
                Data_file = val;
              }
+	     else if(key == "histfile_dir")
+	     {
+		histfile_dir = val;
+		//cout << "Histfile_dir" << histfile_dir << endl;
+	     }
              else if(key == "rootfile_dir") //keep??
              {
                rootfile_dir = val;
