@@ -12,8 +12,8 @@ class parse_config{
   private:
   
   //common data analysis
-  TString Exp,kin,data_file_name,kinematic_file_name,targ,pass,Data_file,fitopt,HCal_Eff_map_file,Comp_file_1,Comp_file_2,kin_1,kin_2,targ_1,targ_2,pass_1,pass_2,spot_choice;
-  int SBS_field,useAlshield,MAXNTRACKS, e_method,hcalnclusmin,SBS_field_1,SBS_field_2;  
+  TString Exp,kin,data_file_name,kinematic_file_name,targ,pass,Data_file,fitopt,HCal_Eff_map_file,kin_1,kin_2,targ_1,targ_2,pass_1,pass_2,spot_choice;
+  int SBS_field,useAlshield,MAXNTRACKS,e_method,hcalnclusmin,SBS_field_1,SBS_field_2;  
   double dxO_n,dyO_n,dxsig_n,dysig_n,dxO_p,dyO_p,dxsig_p,dysig_p,dx_pn,W2_low,W2_high,dx_low,dx_high,dy_low,dy_high,dxsig_n_fac,dxsig_p_fac,dysig_n_fac,dysig_p_fac,coin_mean,coin_sigma,coin_sig_fac,coin_profile_sig,dysig_cut,dysig_cut_fac,HCal_accep_avg_eff;
   TCut globalcut;
   vector<int> runnums;
@@ -26,14 +26,14 @@ class parse_config{
   bool sync_jobs,mc_override;
 
   //For MC HCal efficiency
-  double hcalemin,proton_thresh_fac, neutron_thresh_fac,num_bin, pmin, pmax, Emin, Emax;
+  double hcalemin,proton_thresh_fac,neutron_thresh_fac,num_bin,pmin,pmax,Emin,Emax;
 
   //For data HCal Efficiency analysis
   double thetapq_low,thetapq_high,W2fitmax,W2fitmaxwide,binfac,hbinfac,fidx_min,fidx_max,fidy_min,fidy_max,spot_sig,fitx_low,fitx_high,fity_low,fity_high,dxsig_fid_n,dxsig_fid_p,dysig_fid_n,dysig_fid_p;
 
   //For stability studies
   int slice_mode;
-  TString EnergyCut,TrackHitsCut,  TrackQualityCut, TargetVertexCut, W2Cut, FidXCut, FidYCut, dyCut, eOverpCut, HCal_Shower_atime_Cut, HCal_Energy_Cut, OpticsCut_x,OpticsCut_y, ProtonSpotCut, NeutronSpotCut, isProtonCut, isNeutronCut, left_right;
+  TString EnergyCut,TrackHitsCut,TrackQualityCut,TargetVertexCut,W2Cut,FidXCut,FidYCut,dyCut,eOverpCut,HCal_Shower_atime_Cut,HCal_Energy_Cut,OpticsCut_x,OpticsCut_y,ProtonSpotCut,NeutronSpotCut,isProtonCut,isNeutronCut,left_right;
 
 
 public:
@@ -276,18 +276,6 @@ public:
   vector<int> getRunNums();
   
   void printRunNums();
-
-  //only work on LD2 data 
-  void printDataYields();
-
-  //only work on HCal Efficiency LH2 data
-  void printDataHCalEff();
-
-   //only work on MC LD2  
-   void printMCYields();
-   
-   //only work on HCal Efficiency MC LH2 
-   void printMCHCalEff();
 
 };//end of class
 #endif
