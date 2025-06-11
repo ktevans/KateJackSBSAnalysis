@@ -127,7 +127,7 @@ while(currentLine.ReadLine(datafile)){
 if((datafile.eof()) && !gotRun){
   cout << "Error:Did not find run number: " << runnum << " in the data file! Quitting, figure it out!" << endl;
   return;
-}
+}*/
 
 kinematic_obj datKin(kinematic_file_name, Kin);
 Ebeam = datKin.getBeamEnergy();
@@ -142,7 +142,7 @@ electron_p = datKin.getElectronP();
 nucleon_p = datKin.getNucleonP();
 
 input_file = data_object::makeInputFileName();
-*/
+
 } // end data_object
 
 //destructor
