@@ -340,10 +340,10 @@ void data_parse(const char *setup_file_name){
   C->SetBranchAddress("sbs.hcal.index", &idx_hcal);
 
   //HCal cluster branches
-  double hcal_clus_atime[exp_constants::maxclus], hcal_clus_e[exp_constants::maxclus], hcal_clus_x[exp_constants::maxclus], hcal_clus_y[exp_constants::maxclus],hcal_clus_nblk[exp_constants::maxclus], rowblkHCAL[exp_constants::maxclus], colblkHCAL[exp_constants::maxclus];
+  double hcal_clus_adctime[exp_constants::maxclus], hcal_clus_e[exp_constants::maxclus], hcal_clus_x[exp_constants::maxclus], hcal_clus_y[exp_constants::maxclus],hcal_clus_nblk[exp_constants::maxclus], rowblkHCAL[exp_constants::maxclus], colblkHCAL[exp_constants::maxclus];
   int num_hcal_clusid;
 
-  C->SetBranchStatus("sbs.hcal.clus.atime",1);
+  C->SetBranchStatus("sbs.hcal.clus.adctime",1);
   C->SetBranchStatus("sbs.hcal.clus.e",1);
   C->SetBranchStatus("sbs.hcal.clus.x",1);
   C->SetBranchStatus("sbs.hcal.clus.y",1);
@@ -353,7 +353,7 @@ void data_parse(const char *setup_file_name){
   C->SetBranchStatus("sbs.hcal.clus_blk.row", 1);
   C->SetBranchStatus("sbs.hcal.clus_blk.col", 1);
 
-  C->SetBranchAddress("sbs.hcal.clus.atime", &hcal_clus_atime);
+  C->SetBranchAddress("sbs.hcal.clus.adctime", &hcal_clus_adctime);
   C->SetBranchAddress("sbs.hcal.clus.e", &hcal_clus_e);
   C->SetBranchAddress("sbs.hcal.clus.x", &hcal_clus_x);
   C->SetBranchAddress("sbs.hcal.clus.y", &hcal_clus_y);
@@ -648,7 +648,7 @@ void data_parse(const char *setup_file_name){
 	//Requires that it has the greatest hcal cluster energy and that hcal cluster analog time is in coincidence with bbcal analog time
 	
 	//intime cluster selection analysis, intime algorithm
-	int intime_idx = physics::cluster_intime_select(num_hcal_clusid,hcal_clus_atime,atime_sh,hcal_clus_e,coin_mean,coin_sig_fac,coin_profile_sig,hcalemin);
+	int intime_idx = physics::cluster_intime_select(num_hcal_clusid,hcal_clus_adctime,atime_sh,hcal_clus_e,coin_mean,coin_sig_fac,coin_profile_sig,hcalemin);
 	
 	//Assume that the itime analysis is sufficient to find the best cluster in HCal
 	int clus_idx_best = intime_idx;
@@ -661,9 +661,9 @@ void data_parse(const char *setup_file_name){
 	double dx_bestclus = physics::get_dx(xhcal_bestclus,xhcal_expect);
 	double dx_pclus = physics::get_dx(xhcal_pclus,xhcal_expect);
  	double dy_bestclus = physics::get_dy(yhcal_bestclus,yhcal_expect);	
-	double hcal_atime_bestclus = hcal_clus_atime[clus_idx_best];
+	double hcal_atime_bestclus = hcal_clus_adctime[clus_idx_best];
 	double coin_bestclus = hcal_atime_bestclus - atime_sh;
-	double coin_pclus = hcal_clus_atime[0] - atime_sh;
+	double coin_pclus = hcal_clus_adctime[0] - atime_sh;
 	double hcal_e_bestclus = hcal_clus_e[clus_idx_best];
 	int hcal_nblk_bestclus = (int) hcal_clus_nblk[clus_idx_best];	
 
