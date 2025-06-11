@@ -27,7 +27,7 @@ namespace exp_constants{
 
   //maximum value of the field of the sbs magnet in Tesla. It is kinematic dependent because of magnet collision.
   const double getMaxSBSField(TString Kin, TString pass){
-    double maxsbsfield = 1.71; //Tesla - check that this is right!!
+    double maxsbsfield = 1.26; //Tesla - check that this is right!!
   }
   return maxsbsfield;
   }
