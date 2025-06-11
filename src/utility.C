@@ -62,84 +62,84 @@ namespace utility{
 
   //Helper function to make output file name for parsed data root file
   TString makeOutputFileNameParse(TString exp,TString pass, TString Kin, int SBS_field,TString target){
-  TString outfile = Form("%s/Zeke_parsed_%s_%s_%s_%s_%i.root",(getOutputDir()).Data(),exp.Data(),pass.Data(),Kin.Data(),target.Data(),SBS_field);
+  TString outfile = Form("%s/KJ_parsed_%s_%s_%s_%s_%i.root",(getOutputDir()).Data(),exp.Data(),pass.Data(),Kin.Data(),target.Data(),SBS_field);
   //cout << outfile << endl;
   return outfile;
   }
 
   //Helper function to make output file name for parse mc root file
   TString makeOutputFileName_MCParse(TString exp, TString Kin, int SBS_field,TString target){
-  TString outfile = Form("%s/Zeke_MC_pn_parsed_%s_%s_%s_%i.root",(getOutputDir()).Data(),exp.Data(),Kin.Data(),target.Data(),SBS_field);
+  TString outfile = Form("%s/KJ_MC_pn_parsed_%s_%s_%s_%i.root",(getOutputDir()).Data(),exp.Data(),Kin.Data(),target.Data(),SBS_field);
   return outfile;
   }
 
   //Helper function to make output file name for data and mc comparison
   TString makeOutputFileName_DataMCComp(TString exp, TString pass, TString Kin, int SBS_field,TString target){
-  TString outfile = Form("%s/Zeke_DataMC_Compare_%s_%s_%s_%s_%i.root",(getOutputDir()).Data(),exp.Data(),pass.Data(),Kin.Data(),target.Data(),SBS_field);
+  TString outfile = Form("%s/KJ_DataMC_Compare_%s_%s_%s_%s_%i.root",(getOutputDir()).Data(),exp.Data(),pass.Data(),Kin.Data(),target.Data(),SBS_field);
   return outfile;
   }
 
   //Helper function to make report file name for data and mc comparison
   TString makeReportFileName_DataMCComp(TString exp, TString pass, TString Kin, int SBS_field,TString target){
-  TString outfile = Form("%s/Zeke_DataMC_Compare_%s_%s_%s_%s_%i.txt",(getOutputDir()).Data(),exp.Data(),pass.Data(),Kin.Data(),target.Data(),SBS_field);
+  TString outfile = Form("%s/KJ_DataMC_Compare_%s_%s_%s_%s_%i.txt",(getOutputDir()).Data(),exp.Data(),pass.Data(),Kin.Data(),target.Data(),SBS_field);
   return outfile;
   }
 
   //Helper function to make output file name for for stability studies
   TString makeOutputFileName_Stability(TString exp, TString pass, TString Kin, int SBS_field,TString target, int slice_mode, TString left_right){
-  
+
   //We only want left_right for mode 1
-  
+
   TString outfile;
   if(slice_mode == 1){
-  outfile = Form("%s/Zeke_Stability_%s_%s_%s_%s_%i_mode_%i_%s.root",(getOutputDir()).Data(),exp.Data(),pass.Data(),Kin.Data(),target.Data(),SBS_field,slice_mode,left_right.Data());
+  outfile = Form("%s/KJ_Stability_%s_%s_%s_%s_%i_mode_%i_%s.root",(getOutputDir()).Data(),exp.Data(),pass.Data(),Kin.Data(),target.Data(),SBS_field,slice_mode,left_right.Data());
   }else{
-  outfile = Form("%s/Zeke_Stability_%s_%s_%s_%s_%i_mode_%i.root",(getOutputDir()).Data(),exp.Data(),pass.Data(),Kin.Data(),target.Data(),SBS_field,slice_mode);
+  outfile = Form("%s/KJ_Stability_%s_%s_%s_%s_%i_mode_%i.root",(getOutputDir()).Data(),exp.Data(),pass.Data(),Kin.Data(),target.Data(),SBS_field,slice_mode);
   }
   return outfile;
   }
 
   //Helper function to make report file name for for stability studies
   TString makeReportFileName_Stability(TString exp, TString pass, TString Kin, int SBS_field,TString target){
-  TString outfile = Form("%s/Zeke_Stability_%s_%s_%s_%s_%i.txt",(getOutputDir()).Data(),exp.Data(),pass.Data(),Kin.Data(),target.Data(),SBS_field);
+  TString outfile = Form("%s/KJ_Stability_%s_%s_%s_%s_%i.txt",(getOutputDir()).Data(),exp.Data(),pass.Data(),Kin.Data(),target.Data(),SBS_field);
   return outfile;
   }
 
   //Helper function to make output file name for yield or ratio information
   TString makeYieldReportFileName(TString exp,TString pass,  TString Kin, int SBS_field,TString target){
-  TString outfile = Form("%s/yieldRep_Zeke_%s_%s_%s_%s_%i.txt",(getOutputDir()).Data(),exp.Data(), pass.Data(),Kin.Data(),target.Data(),SBS_field);
+  TString outfile = Form("%s/yieldRep_KJ_%s_%s_%s_%s_%i.txt",(getOutputDir()).Data(),exp.Data(), pass.Data(),Kin.Data(),target.Data(),SBS_field);
   //cout << outfile << endl;
   return outfile;
   }
-  
+
   //Helper function to make output file name for HCal Efficiency from data
   TString makeOutputFileNameHCalEffParse(TString exp,TString pass, TString Kin, int SBS_field,TString target){
-  TString outfile = Form("%s/Zeke_HCalEff_parsed_%s_%s_%s_%s_%i.root",(getOutputDir()).Data(),exp.Data(),pass.Data(),Kin.Data(),target.Data(),SBS_field);
+  TString outfile = Form("%s/KJ_HCalEff_parsed_%s_%s_%s_%s_%i.root",(getOutputDir()).Data(),exp.Data(),pass.Data(),Kin.Data(),target.Data(),SBS_field);
   //cout << outfile << endl;
   return outfile;
   }
 
   //Helper function to make output file name for HCal Efficiency from MC
   TString makeOutputFileName_HCalEffMC(TString exp, TString Kin){
-  TString outfile = Form("%s/Zeke_HCalEff_MC_%s_%s",(getOutputDir()).Data(),exp.Data(),Kin.Data());
- 
+  TString outfile = Form("%s/KJ_HCalEff_MC_%s_%s",(getOutputDir()).Data(),exp.Data(),Kin.Data());
+
   return outfile;
   }
 
   //Helper function to make output file name for HCal Efficiency for uniformity
   TString makeOutputFileNameHCalEffUniformity(TString exp,TString pass, TString Kin, int SBS_field,TString target){
-  TString outfile = Form("%s/Zeke_HCalEff_uniformity_%s_%s_%s_%s_%i.root",(getOutputDir()).Data(),exp.Data(),pass.Data(),Kin.Data(),target.Data(),SBS_field);
+  TString outfile = Form("%s/KJ_HCalEff_uniformity_%s_%s_%s_%s_%i.root",(getOutputDir()).Data(),exp.Data(),pass.Data(),Kin.Data(),target.Data(),SBS_field);
   //cout << outfile << endl;
   return outfile;
   }
 
   TString makeOutputFileNameHCalEffMapComp(TString exp,TString pass1, TString pass2, TString Kin1, TString Kin2, int SBS_field1, int SBS_field2,TString target1,TString target2){
   TString outfile;
-  
+
   if(SBS_field1 < 0 || SBS_field2 < 0){
-  outfile = Form("%s/Zeke_HCalEff_map_Compare_%s_%s_%s_%s_%s_%s_%s.root",(getOutputDir()).Data(),exp.Data(),pass1.Data(),pass2.Data(),Kin1.Data(),Kin2.Data(),target1.Data(),target2.Data());
+  outfile = Form("%s/KJ_HCalEff_map_Compare_%s_%s_%s_%s_%s_%s_%s.root",(getOutputDir()).Data(),exp.Data(),pass1.Data(),pass2.Data(),Kin1.Data(),Kin2.Data(),target1.Data(),target2.Data());
   }else{
-  outfile = Form("%s/Zeke_HCalEff_map_Compare_%s_%s_%s_%s_%s_%s_%s_%i_%i.root",(getOutputDir()).Data(),exp.Data(),pass1.Data(),pass2.Data(),Kin1.Data(),Kin2.Data(),target1.Data(),target2.Data(),SBS_field1,SBS_field2);
+  outfile = Form("%s/KJ_HCalEff_map_Compare_%s_%s_%s_%s_%s_%s_%s_%i_%i.root",(getOutputDir()).Data(),exp.Data(),pass1.Data(),pass2.Data(),Kin1.Data(),Kin2.Data(),target1.Data(),target2.Data(),SBS_field1,SBS_field2);
   }
   //cout << outfile << endl;
   return outfile;
@@ -147,7 +147,7 @@ namespace utility{
 
   //Helper function to make output file name for HCal Efficiency map analysis
   TString makeOutputFileName_HCalEffMap(TString exp,TString pass, TString Kin,TString target){
-  TString outfile = Form("%s/Zeke_HCalEff_map_%s_%s_%s_%s.root",(getOutputDir()).Data(),exp.Data(),pass.Data(),Kin.Data(),target.Data());
+  TString outfile = Form("%s/KJ_HCalEff_map_%s_%s_%s_%s.root",(getOutputDir()).Data(),exp.Data(),pass.Data(),Kin.Data(),target.Data());
   //cout << outfile << endl;
   return outfile;
 
@@ -155,27 +155,27 @@ namespace utility{
 
   //Helper function to make output file for HCal Efficiency Bootstrap
   TString makeOutputFileName_HCalBS(TString exp,TString pass, TString Kin, int SBS_field,TString target,int first_event, int last_event){
-  TString outfile = Form("%s/Zeke_HCalEff_bootstrap_%s_%s_%s_%s_%i_event_%i_%i.root",(getOutputDir()).Data(),exp.Data(),pass.Data(),Kin.Data(),target.Data(),SBS_field,first_event,last_event);
+  TString outfile = Form("%s/KJ_HCalEff_bootstrap_%s_%s_%s_%s_%i_event_%i_%i.root",(getOutputDir()).Data(),exp.Data(),pass.Data(),Kin.Data(),target.Data(),SBS_field,first_event,last_event);
   //cout << outfile << endl;
   return outfile;
   }
   //Helper function for making file name for HCal Efficiency report
   TString makeReportFileName_HCalEff(TString exp,TString pass,  TString Kin, int SBS_field,TString target){
-  TString outfile = Form("%s/efficiencyRep_Zeke_%s_%s_%s_%s_%i.txt",(getOutputDir()).Data(),exp.Data(), pass.Data(),Kin.Data(),target.Data(),SBS_field);
+  TString outfile = Form("%s/efficiencyRep_KJ_%s_%s_%s_%s_%i.txt",(getOutputDir()).Data(),exp.Data(), pass.Data(),Kin.Data(),target.Data(),SBS_field);
   //cout << outfile << endl;
   return outfile;
   }
 
   //Helper function for making file name for HCal Efficiency report with boot strap
   TString makeReportFileName_HCalEffBS(TString exp,TString pass, TString Kin, int SBS_field,TString target,int first_event, int last_event){
-  TString outfile = Form("%s/efficiencyRep_Zeke_%s_%s_%s_%s_%i_event_%i_%i.txt",(getOutputDir()).Data(),exp.Data(),pass.Data(),Kin.Data(),target.Data(),SBS_field,first_event,last_event);
+  TString outfile = Form("%s/efficiencyRep_KJ_%s_%s_%s_%s_%i_event_%i_%i.txt",(getOutputDir()).Data(),exp.Data(),pass.Data(),Kin.Data(),target.Data(),SBS_field,first_event,last_event);
   //cout << outfile << endl;
   return outfile;
   }
 
   //Helper function for output file name for scale field study for MC
   TString makeOutputFileName_MCsf(TString exp, TString Kin, int SBS_field,double sf,TString target){
-  TString outfile = Form("%s/MC_Zeke_%s_%s_%s_%i_sf%.1f.root",(getOutputDir()).Data(),exp.Data(),Kin.Data(),target.Data(),SBS_field,sf);
+  TString outfile = Form("%s/MC_KJ_%s_%s_%s_%i_sf%.1f.root",(getOutputDir()).Data(),exp.Data(),Kin.Data(),target.Data(),SBS_field,sf);
   //cout << outfile << endl;
    return outfile;
   }
@@ -184,7 +184,7 @@ namespace utility{
   //Helper function to find MC histogram files. Right now this only supports John Boyd simulation files. But in future might support others.
   vector<string> findHistFiles(TString replay_type,TString histDirectory,TString partialName){
   vector<string> myFiles;
-  const string& histDir_str = histDirectory.Data();  
+  const string& histDir_str = histDirectory.Data();
   const string& partialName_str = partialName.Data();
 	if(replay_type == "jboyd"){
 		//populate the vector with all matching hist files
@@ -200,13 +200,13 @@ namespace utility{
 	}
   return myFiles;
   }
- 
+
   //Used for J. Boyd Sim files
   //Helper function to match all the MC root files with the already found MC hist files. This function is not ideal, it modifies both of the vectors by the time the function is done. Though it does not have a return type
   void matchMCFiles(TString replay_type,vector<string>& histFiles,vector<string>& rootFiles, TString rootDirectory){
 	//vector to track file indices that don't match
 	vector<int> unmatchedIndices;
-	int matches = 0;  
+	int matches = 0;
 	const string& rootDir_str = rootDirectory.Data();
 	if(replay_type == "jboyd"){
 		//loop over the values in the hist file vector
@@ -234,7 +234,7 @@ namespace utility{
 				break; //Since we found the match we can stop searching for this iteration
 				}//conditional
 			}//inner for loop
-		
+
 			if(!matchFound){
 			//if match not found indicate that index needs removal
 			unmatchedIndices.push_back(i);
@@ -296,7 +296,7 @@ namespace utility{
                 }),neutron_vec.end());
 
   }// end sync job function
-  
+
   //Used with regular sim files form JLab-HPC, not from J. Boyd.
   //Function that searches through two vectors of pair of string and float vector and removes entries without a matching pair
   //since we are sending references to vectors it should modifiy the original reference
@@ -319,7 +319,7 @@ namespace utility{
   //Remove unpaired entries from vec1
   vec1.erase(std::remove_if(vec1.begin(),vec1.end(), [&](const pair<string,vector<float>>& item){return item.second.empty() || jobIds2.find(item.second[0]) == jobIds2.end();}), vec1.end());
 
-  //Remove unpaired entries from vec2 
+  //Remove unpaired entries from vec2
   vec2.erase(std::remove_if(vec2.begin(),vec2.end(), [&](const pair<string,vector<float>>& item){return item.second.empty() || jobIds1.find(item.second[0]) == jobIds1.end();}), vec2.end());
 
   }//end sync Jobs function
@@ -350,7 +350,7 @@ namespace utility{
 			TObjArray* tokens = myLine.Tokenize(delim);
 				//check that we found enough elements
 				if(tokens->GetEntries() >= 2){
-				TObjString* value = dynamic_cast<TObjString*>(tokens->At(1)); 
+				TObjString* value = dynamic_cast<TObjString*>(tokens->At(1));
 					if(value){
 					TString valueString = value->String();
 					//convert to double
@@ -400,7 +400,7 @@ namespace utility{
 
   return foundValue;
   }//end of hist search function
-  
+
   //Used with regular sim files form JLab-HPC, not from J. Boyd.
   //dir1 is path to .csv , dir2 is path to .root , partialName is the search word, vec1 stores the root file absolute paths, csvData is a vector to store the CSV info and the root file path
   void SyncFilesCSV(TString dir1, TString dir2,TString partialName,vector<string>& vec1,vector<pair<string,vector<float>>>& csvData){
@@ -480,7 +480,7 @@ namespace utility{
 				//cout << path << endl;
 				//stop searching after a match
 				break;
-				}		
+				}
 			}
 		}
 	}
@@ -524,7 +524,7 @@ namespace utility{
   double sum_weights = 0;
   int vec_length = myVec.size();
   int vec_uncert_length = myVec_uncert.size();
-  
+
   	if(vec_length != vec_uncert_length){
 	cout << "The lengths of the vectors while calculating weighted mean are not the same. Figure it out!" << endl;
 	}
@@ -561,7 +561,7 @@ namespace utility{
 	numerator += weight*pow((value-weight_mean),2);
 	sum_weights += weight;
 	}
-	 
+
   double std_dev = sqrt(numerator/sum_weights);
   return std_dev;
   }
