@@ -85,7 +85,7 @@ if(datafile.fail()){
 TString currentLine;
 bool gotRun = false;
 TString runnum_string = utility::intToTString(runnum);
-/*
+
 while(currentLine.ReadLine(datafile)){
   if(currentLine.BeginsWith(runnum_string)){
     TObjArray *tokens = currentLine.Tokenize(",");
@@ -127,7 +127,7 @@ while(currentLine.ReadLine(datafile)){
 if((datafile.eof()) && !gotRun){
   cout << "Error:Did not find run number: " << runnum << " in the data file! Quitting, figure it out!" << endl;
   return;
-}*/
+}
 
 kinematic_obj datKin(kinematic_file_name, Kin);
 Ebeam = datKin.getBeamEnergy();
