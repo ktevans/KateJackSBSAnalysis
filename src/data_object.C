@@ -10,6 +10,7 @@
 //private helper function. Requires that private class variables are initialized first
 //need to test this function carefully. Should be correct for data file directory structure
 TString data_object::makeInputFileName(){
+/*
   string input_directory = "/volatile/halla/sbs/sbs-gen/GEN_REPLAYS/pass2/TEST/try8";
   TString inputfile;
   const char *input_directory_char = input_directory.c_str();
@@ -70,6 +71,7 @@ TString data_object::makeInputFileName(){
     cout << "Error: Pass variable was given that is not pass 0,1, or 2. It's actually pass " << pass << "! That's not a pass. Stupid." << endl;
   }
 return inputfile;
+*/
 } // end makeInputFileName
 
 data_object::data_object(int runnum, const char *data_file_name, const char *kinematic_file_name, TString Kin, TString SBS_field, TString targ, TString daPass){
