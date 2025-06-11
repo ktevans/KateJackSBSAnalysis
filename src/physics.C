@@ -149,9 +149,11 @@ namespace physics{
 	ptarg.SetPxPyPzE(0.0,0.0,0.0,physics_constants::M_p);
 	//LD2
 	//For Quasi-elastic scattering dummy should be like deuterium
-	}else if(target == "LD2" || target == "np"|| target == "Dummy" || target == "He3"){
+	}else if(target == "LD2" || target == "np"|| target == "Dummy"){
 	ptarg.SetPxPyPzE(0.0,0.0,0.0,0.5*(physics_constants::M_p+physics_constants::M_n));
 	//just neutrons
+	}else if(target == "He3"){
+	ptarg.SetPxPyPzE(0.0,0.0,0.0,(2*physics_constants::M_p+physics_constants::M_n)/3);
 	}else if(target == "n"){
 	ptarg.SetPxPyPzE(0.0,0.0,0.0,physics_constants::M_n);
 	}else{
@@ -192,12 +194,15 @@ namespace physics{
 	pcentral = ebeam/(1.0 + (ebeam/physics_constants::M_p)*(1.0 - cos(etheta))); 
         //LD2 
         //For Quasi-elastic scattering dummy would be like deuterium
-	}else if(target == "LD2" || target == "np"|| target == "Dummy" || target == "He3"){
+	}else if(target == "LD2" || target == "np"|| target == "Dummy"){
 	double Nmass = 0.5*(physics_constants::M_p+physics_constants::M_n);
         pcentral = ebeam/(1.0 + (ebeam/Nmass)*(1.0 - cos(etheta)));
         //neutron
 	}else if(target == "n"){
 	pcentral = ebeam/(1.0 + (ebeam/physics_constants::M_n)*(1.0 - cos(etheta)));
+	}else if(target == "He3"){
+	double Nmass = (2*physics_constants::M_p+physics_constants::M_n)/3;
+	pcentral = ebeam/(1.0 + (ebeam/Nmass)*(1.0 - cos(etheta)));
 	}else{
         //give an error
 	cout << "Error: Target " << target << " is not handled by this function! Defaulting to zero." << endl;
@@ -279,10 +284,13 @@ namespace physics{
          p_N_exp = sqrt(pow(nu,2) + 2.0 * physics_constants::M_p * nu);
          //LD2
          //For Quasi-elastic scattering Dummy should be like deutreium
-	 }else if(target == "LD2"||target == "Dummy" || target == "He3"){
+	 }else if(target == "LD2"||target == "Dummy"){
          double Nmass = 0.5*(physics_constants::M_p+physics_constants::M_n);
          p_N_exp = sqrt(pow(nu,2) + 2.0 * Nmass * nu);
-         }else{
+         }else if(target == "He3"){
+	 double Nmass = (2*physics_constants::M_p+physics_constants::M_n)/3;
+ 	 p_N_exp = sqrt(pow(nu,2) + 2.0 * Nmass * nu);
+	 }else{
          //give an error
 	 cout << "Error: Target " << target << " is not handled by this function! Defaulting to zero." << endl;
          p_N_exp = 0;
@@ -314,8 +322,11 @@ namespace physics{
 	W2 = pow(physics_constants::M_p,2)+2.0*physics_constants::M_p*(pbeam.E() - p_eprime.E())-Q2;
 	//LD2
 	//For Quasi-elastic scattering dummy should be like deuterium
-	}else if(target == "LD2"|| target == "Dummy" || target == "He3"){
+	}else if(target == "LD2"|| target == "Dummy"){
         double Nmass = 0.5*(physics_constants::M_p+physics_constants::M_n);
+        W2 = pow(Nmass,2)+2.0*Nmass*(pbeam.E() - p_eprime.E())-Q2;
+        }else if(target == "He3"){
+        double Nmass = (2*physics_constants::M_p+physics_constants::M_n)/3;
         W2 = pow(Nmass,2)+2.0*Nmass*(pbeam.E() - p_eprime.E())-Q2;
         }else{
         //give an error	
@@ -446,9 +457,10 @@ namespace physics{
 	tau = Q2/(4.0*pow(physics_constants::M_p,2));
  	//LD2
  	//For Quasi-elastic scattering dummy should be like deuterium
- 	}else if(target == "LD2" || target == "np"|| target == "Dummy" || target == "He3"){
+ 	}else if(target == "LD2" || target == "np"|| target == "Dummy"){
 	tau = Q2/(4.0*pow(0.5*(physics_constants::M_p + physics_constants::M_n),2));
- 	//just neutrons
+ 	}else if(target == "He3"){
+	tau = Q2/(4.0*pow((2*physics_constants::M_p + physics_constants::M_n)/3,2));
  	}else if(target == "n"){
 	tau = Q2/(4.0*pow(physics_constants::M_n,2));
 	}else{
