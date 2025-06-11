@@ -540,12 +540,14 @@ void data_parse(const char *setup_file_name){
 
 	//Calculate Mott cross section for this event
 	double Mott_CS = physics::getMott_CS(physics_constants::alpha,etheta,pcorr,Ecorr);
-		
+	*/	
 	/* Can reconstruct e' momentum for downstream calculations differently:
 	* v1 - Use four-momentum member functions
  	* v2 - Use all available ekine (tree) vars and calculate vectors (should be the same as v1)
 	* v3 - Use reconstructed angles as independent qty (usually preferable given GEM precision at most kinematics)
  	* v4 - Use reconstructed momentum as independent qty */
+
+/*
 	
 	//four momentum transferred squared
 	double Q2; 
