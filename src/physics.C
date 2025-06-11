@@ -58,13 +58,16 @@ namespace physics{
  double Eloss_outgoing;
         //LH2 
 	if(target == "LH2"){
- 	Eloss_outgoing = (exp_constants::celldiameter/2.0)/sin(bbtheta)*(exp_constants::lh2_rho_tgt)*(exp_constants::lh2_dEdx); //Approximately 1 MeV, one could correct more using the raster position
+ 	//Eloss_outgoing = (exp_constants::celldiameter/2.0)/sin(bbtheta)*(exp_constants::lh2_rho_tgt)*(exp_constants::lh2_dEdx); //Approximately 1 MeV, one could correct more using the raster position
+	Eloss_outgoing = 0;
 	//LD2
 	}else if(target == "LD2"){
-	Eloss_outgoing = (exp_constants::celldiameter/2.0)/sin(bbtheta)*(exp_constants::ld2_rho_tgt)*(exp_constants::ld2_dEdx);
+	//Eloss_outgoing = (exp_constants::celldiameter/2.0)/sin(bbtheta)*(exp_constants::ld2_rho_tgt)*(exp_constants::ld2_dEdx);
+	Eloss_outgoing = 0;
 	}else if(target == "Dummy"){
 	//Not sure if this is correct kind of just using the others as an example and assuming its similar but with Aluminum for the windows.
-	Eloss_outgoing = (exp_constants::celldiameter/2.0)/sin(bbtheta)*(exp_constants::rho_Al)*(exp_constants::dEdx_Al);
+	Eloss_outgoing = 0;
+	//Eloss_outgoing = (exp_constants::celldiameter/2.0)/sin(bbtheta)*(exp_constants::rho_Al)*(exp_constants::dEdx_Al);
 	}else{
 	//give an error statement for and don't calculate the Eloss_outgoing.
 	cout << "Warning: Target " << target << " is not handle by energy loss function! Defaulting to zero." << endl;
@@ -80,13 +83,16 @@ namespace physics{
 
  	//LH2
  	if(target == "LH2"){
-	Eloss = ((exp_constants::l_tgt/2.0))*(exp_constants::lh2_rho_tgt)*(exp_constants::lh2_dEdx) + (exp_constants::lh2_uwallthick)*(exp_constants::rho_Al)*(exp_constants::dEdx_Al);
+	//Eloss = ((exp_constants::l_tgt/2.0))*(exp_constants::lh2_rho_tgt)*(exp_constants::lh2_dEdx) + (exp_constants::lh2_uwallthick)*(exp_constants::rho_Al)*(exp_constants::dEdx_Al);
+	Eloss = 0;
 	//LD2
 	}else if(target == "LD2"){
-	Eloss = ((exp_constants::l_tgt/2.0))*(exp_constants::ld2_rho_tgt)*(exp_constants::ld2_dEdx) + (exp_constants::ld2_uwallthick)*(exp_constants::rho_Al)*(exp_constants::dEdx_Al);
+	//Eloss = ((exp_constants::l_tgt/2.0))*(exp_constants::ld2_rho_tgt)*(exp_constants::ld2_dEdx) + (exp_constants::ld2_uwallthick)*(exp_constants::rho_Al)*(exp_constants::dEdx_Al);
+	Eloss = 0;
 	//Not sure if this is correct kind of just using the others as an example and assuming its similar but with Aluminum for the windows.I
 	}else if(target == "Dummy"){
-	Eloss = (exp_constants::ld2_uwallthick)*(exp_constants::rho_Al)*(exp_constants::dEdx_Al);
+	//Eloss = (exp_constants::ld2_uwallthick)*(exp_constants::rho_Al)*(exp_constants::dEdx_Al);
+	Eloss = 0;
 	}else{
         //give an error statement for and don't calculate the Eloss.
          cout << "Warning: Target " << target << " is not handle by energy loss function! Defaulting to zero." << endl;
