@@ -131,11 +131,11 @@ namespace physics{
  TLorentzVector ptarg;
  
  	//LH2 or protons
- 	if(target == "LH2" || target == "p"){
+ 	if(target == "LH2" || target == "p" || target == "H2"){
 	ptarg.SetPxPyPzE(0.0,0.0,0.0,physics_constants::M_p);
 	//LD2
 	//For Quasi-elastic scattering dummy should be like deuterium
-	}else if(target == "LD2" || target == "np"|| target == "Dummy"){
+	}else if(target == "LD2" || target == "np"|| target == "Dummy" || target == "He3"){
 	ptarg.SetPxPyPzE(0.0,0.0,0.0,0.5*(physics_constants::M_p+physics_constants::M_n));
 	//just neutrons
 	}else if(target == "n"){
@@ -174,11 +174,11 @@ namespace physics{
  double pcentral;
  double ebeam = pbeam.E();
 	//LH2 or proton
-	if(target == "LH2" || target == "p"){
+	if(target == "LH2" || target == "p" || target == "H2"){
 	pcentral = ebeam/(1.0 + (ebeam/physics_constants::M_p)*(1.0 - cos(etheta))); 
         //LD2 
         //For Quasi-elastic scattering dummy would be like deuterium
-	}else if(target == "LD2" || target == "np"|| target == "Dummy"){
+	}else if(target == "LD2" || target == "np"|| target == "Dummy" || target == "He3"){
 	double Nmass = 0.5*(physics_constants::M_p+physics_constants::M_n);
         pcentral = ebeam/(1.0 + (ebeam/Nmass)*(1.0 - cos(etheta)));
         //neutron
@@ -428,11 +428,11 @@ namespace physics{
  double tau; 
  
  	//LH2 or protons
-	if(target == "LH2" || target == "p" ){
+	if(target == "LH2" || target == "p" || target == "H2"){
 	tau = Q2/(4.0*pow(physics_constants::M_p,2));
  	//LD2
  	//For Quasi-elastic scattering dummy should be like deuterium
- 	}else if(target == "LD2" || target == "np"|| target == "Dummy"){
+ 	}else if(target == "LD2" || target == "np"|| target == "Dummy" || target == "He3"){
 	tau = Q2/(4.0*pow(0.5*(physics_constants::M_p + physics_constants::M_n),2));
  	//just neutrons
  	}else if(target == "n"){
