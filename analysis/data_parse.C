@@ -3,7 +3,7 @@
 //05/29/2025
 //Purpose: Parsing Script for GEn-II data to produce output histograms for later analysis
 
-//The exact ordering of this matters. ROOT for some reason cannot handle calls for files that have already been included. 
+//The exact ordering of this matters. ROOT for some reason cannot handle calls for files that have already been included.
 #include "TF1.h"
 #include "TChain.h"
 #include "TTree.h"
@@ -32,13 +32,13 @@
 void data_parse(const char *setup_file_name){
 
   //Define a clock to check macro processing time
-  TStopwatch *watch = new TStopwatch(); 
+  TStopwatch *watch = new TStopwatch();
   watch->Start( kTRUE );
-  
+
   //parse object to get in the information that The One Config file has and is manipulated
-  parse_config mainConfig(setup_file_name); 
+  parse_config mainConfig(setup_file_name);
   //mainConfig.printDataYields();
-  
+
   //store all the parameters from the mainConfig file into local variables. So we don't have to keep recalling them
   vector<int> runNums = mainConfig.getRunNums();
   TCut globalcut = mainConfig.getGlobalCut();
@@ -83,7 +83,7 @@ void data_parse(const char *setup_file_name){
   double dysig_cut_fac = mainConfig.get_dySigCutFac();
   int hcalnclusmin = mainConfig.get_HCalNclusMin();
 
-  
+
   //store all important kinematic info in local variables
   kinematic_obj myKin(kinematic_file,kin);
   double EBeam = myKin.getBeamEnergy();
@@ -101,14 +101,14 @@ void data_parse(const char *setup_file_name){
 
   //setup fiducial region based on dx and dy spot information
   vector<double> hcalfid = cuts::hcalfid(dxsig_p,dxsig_n,dysig_p,hcalaa,dxsig_p_fac,dysig_p_fac);
- 
+
   //print out the information for the fid region
   for(int k=0; k<hcalfid.size();k++){
   cout <<"HCal Fid "<< k << " :" << hcalfid[k] << endl;
   }
-  
+
   int num_runs = runNums.size();
-  //double hcalfit_low = exp_constants::hcalposXi_mc; //lower fit/bin limit for hcal dx plots. 
+  //double hcalfit_low = exp_constants::hcalposXi_mc; //lower fit/bin limit for hcal dx plots.
   //double hcalfit_high = exp_constants::hcalposXf_mc; //higher fit/bin limit for hcal dx plots.
   //double hcal_fitrange = exp_constants::hcal_vrange; //Full range of hcal dx plots
 
@@ -129,180 +129,166 @@ void data_parse(const char *setup_file_name){
 
   //allocate memory at each run
   TChain *C = nullptr;
-  
+
   //create output tree
   TTree *Parse = new TTree("Parse","Analysis Tree");
 
   //uncut output tree variables
-  double dx_out;
-  double dy_out;
-  double xexp_out;
-  double yexp_out;
-  double xhcal_out;
-  double yhcal_out;
-  double W2_out;
-  double nu_out;
-  double tau_out;
-  double epsilon_out;
-  double pcorr_out;
-  double mott_out;
-  double ehcal_out;
-  double BBtot_e_out;
-  double BBsh_e_out;
-  double BBps_e_out;
-  double hcal_atime_out;
-  double BBsh_atime_out;
-  double BBps_atime_out;
-  double BBgem_nhits_out;
-  double BBgem_ngoodhits_out;
-  double BBgem_chi2ndf_out;
-  double BBtr_x_out;
-  double BBtr_y_out;
-  double BBtr_p_out;
-  double BBtr_vz_out;
-  double BB_E_over_p_out;
-  double BBtr_th_out;
-  double BBtr_ph_out;
-  double BBtr_r_x_out;
-  double BBtr_r_y_out;
-  double BBtr_r_th_out;
-  double BBtr_r_ph_out;
-  double coin_mean_out;
-  double coin_sigma_out;
-  double dyO_p_out;
-  double dyO_n_out; 
-  double dysig_p_out;
-  double dysig_n_out;
-  double dysig_n_fac_out;
-  double dysig_p_fac_out;
-  double dxO_p_out;
-  double dxO_n_out;
-  double dxsig_p_out;
-  double dxsig_n_out;
-  double dxsig_n_fac_out;
-  double dxsig_p_fac_out;
-  double nsigx_fid_out;
-  double nsigy_fid_out;
-  double W2low_out;
-  double W2high_out;
-  int num_hcal_clusid_out;
-  int nclus_hcal_out;
-  int hcal_clus_blk_out;
-  int BBtr_n_out;
-  int passGlobal_out;
-  int HCalON_out;
-  int passW2_out;
-  int passCoin_out;
-  int passFid_out;
-  int run_out;
-  int mag_out;
-  int BBsh_nclus_out;
-  int BBsh_nblk_out;
-  int BBps_nclus_out;
-  int BBps_nblk_out;
 
-  double hcal_sh_atime_diff_out;
-  double proton_deflection_out;
-  double p_central_out;
-  double rowblkHCAL_out;
-  double colblkHCAL_out;
-  double nblkHCAL_out;
-  double ehcal_tree_out;
-
-  //For physics extraction
-  double Ebeam_corr_out;
-  double E_eprime_out;
-  double etheta_out;
-  double p_N_out;
-  double Q2_out;
-
-  //setup new output tree branches
+  //calculated variables
+  double dx_out, dy_out, xexp_out, yexp_out, W2_out, nu_out, tau_out, epsilon_out, pcorr_out, mott_out;
   Parse->Branch("dx", &dx_out, "dx/D");
   Parse->Branch("dy", &dy_out, "dy/D");
-  Parse->Branch("xexp", &xexp_out, "xexp/D");
-  Parse->Branch("yexp", &yexp_out, "yexp/D");
-  Parse->Branch("xhcal", &xhcal_out, "xhcal/D");
-  Parse->Branch("yhcal", &yhcal_out, "yhcal/D");
-  Parse->Branch("W2", &W2_out, "W2/D");
-  Parse->Branch("nu", &nu_out, "nu/D");
-  Parse->Branch("tau", &tau_out, "tau/D");
-  Parse->Branch("epsilon", &epsilon_out, "epsilon/D");
+  Parse->Branch("sbs.hcal.x_exp", &xexp_out, "sbs.hcal.x_exp/D");
+  Parse->Branch("sbs.hcal.y_exp", &yexp_out, "sbs.hcal.y_exp/D");
+  Parse->Branch("e.kine.W2", &W2_out, "e.kine.W2/D");
+  Parse->Branch("e.kine.nu", &nu_out, "e.kine.nu/D");
+  Parse->Branch("e.kine.tau", &tau_out, "e.kine.tau/D");
+  Parse->Branch("e.kine.epsilon", &epsilon_out, "e.kine.epsilon/D");
   Parse->Branch("pcorr", &pcorr_out, "pcorr/D");
-  Parse->Branch("mott", &mott_out, "mott/D");
-  Parse->Branch("ehcal", &ehcal_out, "ehcal/D");
-  Parse->Branch("ehcal_tree", &ehcal_tree_out, "ehcal_tree/D");
-  Parse->Branch("BBtot_e", &BBtot_e_out, "BBtot_e/D");
-  Parse->Branch("BBsh_e", &BBsh_e_out, "BBsh_e/D");
-  Parse->Branch("BBsh_nclus", &BBsh_nclus_out, "BBsh_nclus/I");
-  Parse->Branch("BBsh_nblk", &BBsh_nblk_out, "BBsh_nblk/I");
-  Parse->Branch("BBps_e", &BBps_e_out, "BBps_e/D");
-  Parse->Branch("BBps_nclus", &BBps_nclus_out, "BBps_nclus/I");
-  Parse->Branch("BBps_nblk", &BBps_nblk_out, "BBps_nblk/I");
-  Parse->Branch("hcal_atime", &hcal_atime_out, "hcal_atime/D");
-  Parse->Branch("BBsh_atime", &BBsh_atime_out, "BBsh_atime/D");
-  Parse->Branch("BBps_atime", &BBps_atime_out, "BBps_atime/D");
-  Parse->Branch("BBgem_nhits", &BBgem_nhits_out, "BBgem_nhits/D");
-  Parse->Branch("BBgem_ngoodhits", &BBgem_ngoodhits_out, "BBgem_ngoodhits/D");
-  Parse->Branch("BBgem_chi2ndf", &BBgem_chi2ndf_out, "BBgem_chi2ndf/D");
-  Parse->Branch("BBtr_x", &BBtr_x_out, "BBtr_x/D");
-  Parse->Branch("BBtr_y", &BBtr_y_out, "BBtr_y/D");
-  Parse->Branch("BBtr_p", &BBtr_p_out, "BBtr_p/D");
-  Parse->Branch("BBtr_vz", &BBtr_vz_out, "BBtr_vz/D");
-  Parse->Branch("BB_E_over_p", &BB_E_over_p_out, "BB_E_over_p/D");
-  Parse->Branch("BBtr_th", &BBtr_th_out, "BBtr_th/D");
-  Parse->Branch("BBtr_ph", &BBtr_ph_out, "BBtr_ph/D");
-  Parse->Branch("BBtr_r_x", &BBtr_r_x_out, "BBtr_r_x/D");
-  Parse->Branch("BBtr_r_y", &BBtr_r_y_out, "BBtr_r_y/D");
-  Parse->Branch("BBtr_r_th", &BBtr_r_th_out, "BBtr_r_th/D");
-  Parse->Branch("BBtr_r_ph", &BBtr_r_ph_out, "BBtr_r_ph/D");
-  Parse->Branch("coin_mean", &coin_mean_out, "coin_mean/D");
-  Parse->Branch("coin_sigma", &coin_sigma_out, "coin_sigma/D");
-  Parse->Branch("dyO_p", &dyO_p_out, "dyO_p/D");
-  Parse->Branch("dyO_n", &dyO_n_out, "dyO_n/D");
-  Parse->Branch("dysig_p", &dysig_p_out, "dysig_p/D");
-  Parse->Branch("dysig_n", &dysig_n_out, "dysig_n/D");
-  Parse->Branch("dysig_n_fac", &dysig_n_fac_out, "dysig_n_fac/D");
-  Parse->Branch("dysig_p_fac", &dysig_p_fac_out, "dysig_p_fac/D");
-  Parse->Branch("dxO_p", &dxO_p_out, "dxO_p/D");
-  Parse->Branch("dxO_n", &dxO_n_out, "dxO_n/D");
-  Parse->Branch("dxsig_p", &dxsig_p_out, "dxsig_p/D");
-  Parse->Branch("dxsig_n", &dxsig_n_out, "dxsig_n/D");
-  Parse->Branch("dxsig_n_fac", &dxsig_n_fac_out, "dxsig_n_fac/D");
-  Parse->Branch("dxsig_p_fac", &dxsig_p_fac_out, "dxsig_p_fac/D");
-  Parse->Branch("nsigx_fid", &nsigx_fid_out , "nsigx_fid/D");
-  Parse->Branch("nsigy_fid", &nsigy_fid_out , "nsigy_fid/D");
-  Parse->Branch("W2low", &W2low_out, "W2low/D");
-  Parse->Branch("W2high", &W2high_out, "W2high/D");
-  Parse->Branch("hcal_sh_atime_diff", &hcal_sh_atime_diff_out, "hcal_sh_atime_diff/D");
-  Parse->Branch("proton_deflection", &proton_deflection_out, "proton_deflection/D");
-  Parse->Branch("p_central", &p_central_out, "p_centrial/D");
+  Parse->Branch("e.kine.mott", &mott_out, "e.kine.mott/D");
 
-  Parse->Branch("num_hcal_clusid", &num_hcal_clusid_out, "num_hcal_clusid/I");
-  Parse->Branch("hcal_clus_blk", &hcal_clus_blk_out, "hcal_clus_blk/I");
-  Parse->Branch("nclus_hcal", &nclus_hcal_out,"nclus_hcal/I");
-  Parse->Branch("BBtr_n", &BBtr_n_out, "BBtr_n/I");
-  Parse->Branch("passGlobal", &passGlobal_out,"passGlobal/I");
-  Parse->Branch("HCalON", &HCalON_out,"HCalON/I");
-  Parse->Branch("passW2", &passW2_out,"passW2/I");
-  Parse->Branch("passCoin", &passCoin_out,"passCoin/I");
-  Parse->Branch("passFid", &passFid_out, "passFid/I");
-  Parse->Branch("run", &run_out, "run/I");
-  Parse->Branch("mag", &mag_out, "mag/I");
-
-  Parse->Branch( "nblkHCAL", &nblkHCAL_out, "nblkHCAL/D" );
-  Parse->Branch( "rowblkHCAL",&rowblkHCAL_out, "rowblkHCAL/D" );
-  Parse->Branch( "colblkHCAL", &colblkHCAL_out, "colblkHCAL/D" );
-
-  //For physics extraction
+  double Ebeam_corr_out, E_eprime_out, etheta_out, p_N_out, Q2_out;
   Parse->Branch("Ebeam_corr", &Ebeam_corr_out, "Ebeam_corr/D");
   Parse->Branch("E_eprime", &E_eprime_out, "E_eprime/D");
   Parse->Branch("etheta", &etheta_out, "etheta/D");
   Parse->Branch("p_N", &p_N_out, "p_N/D");
-  Parse->Branch("Q2", &Q2_out, "Q2/D");
+  Parse->Branch("e.kine.Q2", &Q2_out, "e.kine.Q2/D");
+
+
+  //hcal variables
+  double sbs_hcal_x_out, sbs_hcal_y_out, sbs_hcal_e_out, sbs_hcal_atimeblk_out, sbs_hcal_clus_blk_row_out, sbs_hcal_clus_blk_col_out, sbs_hcal_nblk_out;//,ehcal_tree_out;
+  Parse->Branch("sbs.hcal.x", &sbs_hcal_x_out, "sbs.hcal.x/D");
+  Parse->Branch("sbs.hcal.y", &sbs_hcal_y_out, "sbs.hcal.y/D");
+  Parse->Branch("sbs.hcal.e", &sbs_hcal_e_out, "sbs.hcal.e/D");
+  //Parse->Branch("ehcal_tree", &ehcal_tree_out, "ehcal_tree/D");
+  Parse->Branch("sbs.hcal.atimeblk", &sbs_hcal_atimeblk_out, "sbs.hcal.atimeblk/D");
+  Parse->Branch("sbs.hcal.nblk", &sbs_hcal_nblk_out, "sbs.hcal.nblk/D");
+  Parse->Branch("sbs.hcal.clus_blk.row",&sbs_hcal_clus_blk_row_out, "sbs.hcal.clus_blk.row/D");
+  Parse->Branch("sbs.hcal.clus_blk.col", &sbs_hcal_clus_blk_col_out, "sbs.hcal.clus_blk.col/D");
+
+  int Ndata_sbs_hcal_clus_id_out, sbs_hcal_nclus_out, sbs_hcal_clus_blk_id_out;
+  Parse->Branch("Ndata.sbs.hcal.clus.id", &Ndata_sbs_hcal_clus_id_out, "Ndata.sbs.hcal.clus.id/I");
+  Parse->Branch("sbs.hcal.clus_blk.id", &sbs_hcal_clus_blk_id_out, "sbs.hcal.clus_blk.id/I");
+  Parse->Branch("sbs.hcal.nclus", &sbs_hcal_nclus_out,"sbs.hcal.nclus/I");
+
+
+  //bbcal variables
+  double BBtot_e_out, bb_sh_e_out, bb_ps_e_out, bb_sh_atimeblk_out, bb_ps_atimeblk_out;
+  Parse->Branch("bb.tot.e", &BBtot_e_out, "bb.tot.e/D");
+  Parse->Branch("bb.sh.e", &bb_sh_e_out, "bb.sh.e/D");
+  Parse->Branch("bb.ps.e", &bb_ps_e_out, "bb.ps.e/D");
+  Parse->Branch("bb.sh.atimeblk", &bb_sh_atimeblk_out, "bb.sh.atimeblk/D");
+  Parse->Branch("bb.ps.atimeblk", &bb_ps_atimeblk_out, "bb.ps.atimeblk/D");
+
+  int bb_sh_nclus_out, bb_sh_nblk_out, bb_ps_nclus_out, bb_ps_nblk_out;
+  Parse->Branch("bb.sh.nclus", &bb_sh_nclus_out, "bb.sh.nclus/I");
+  Parse->Branch("bb.sh.nblk", &bb_sh_nblk_out, "bb.sh.nblk/I");
+  Parse->Branch("bb.ps.nclus", &bb_ps_nclus_out, "bb.ps.nclus/I");
+  Parse->Branch("bb.ps.nblk", &bb_ps_nblk_out, "bb.ps.nblk/I");
+
+  //grinch variables
+  double bb_grinch_tdc_clus_trackindex_out, bb_grinch_tdc_clus_size_out, bb_grinch_tdc_hit_time_out[maxtracks], bb_grinch_tdc_hit_pmtnum_out[maxtracks], bb_grinch_tdc_hit_amp_out[maxtracks];
+  Parse->Branch("bb.grinch_tdc.clus.trackindex",&bb_grinch_tdc_clus_trackindex_out,"bb.grinch_tdc.clus.trackindex/D");
+  Parse->Branch("bb.grinch_tdc.clus.size",&bb_grinch_tdc_clus_size_out,"bb.grinch_tdc.clus.size/D");
+  Parse->Branch("bb.grinch_tdc.hit.time",&bb_grinch_tdc_hit_time_out,"bb.grinch_tdc.hit.time/D");
+  Parse->Branch("bb.grinch_tdc.hit.pmtnum",&bb_grinch_tdc_hit_pmtnum_out,"bb.grinch_tdc.hit.pmtnum/D");
+  Parse->Branch("bb.grinch_tdc.hit.amp",&bb_grinch_tdc_hit_amp_out,"bb.grinch_tdc.hit.amp/D");
+  int Ndata_bb_grinch_tdc_hit_time_out;
+  Parse->Branch("Ndata.bb.grinch_tdc.hit.time",&Ndata_bb_grinch_tdc_hit_time_out,"Ndata.bb.grinch_tdc.hit.time/I");
+
+
+  //gem variables
+  double bb_gem_track_nhits_out, bb_gem_track_ngoodhits_out, bb_gem_track_chi2ndf_out;
+  Parse->Branch("bb.gem.track.nhits", &bb_gem_track_nhits_out, "bb.gem.track.nhits/D");
+  Parse->Branch("bb.gem.track.ngoodhits", &bb_gem_track_ngoodhits_out, "bb.gem.track.ngoodhits/D");
+  Parse->Branch("bb.gem.track.chi2ndf", &bb_gem_track_chi2ndf_out, "bb.gem.track.chi2ndf/D");
+
+
+  //tracking variables
+  double bb_tr_x_out, bb_tr_y_out, bb_tr_p_out, bb_tr_vz_out, bb_tr_th_out, bb_tr_ph_out, bb_tr_r_x_out, bb_tr_r_y_out, bb_tr_r_th_out, bb_tr_r_ph_out;
+  Parse->Branch("bb.tr.x", &bb_tr_x_out, "bb.tr.x/D");
+  Parse->Branch("bb.tr.y", &bb_tr_y_out, "bb.tr.y/D");
+  Parse->Branch("bb.tr.p", &bb_tr_p_out, "bb.tr.p/D");
+  Parse->Branch("bb.tr.vz", &bb_tr_vz_out, "bb.tr.vz/D");
+  Parse->Branch("bb.tr.th", &bb_tr_th_out, "bb.tr.th/D");
+  Parse->Branch("bb.tr.ph", &bb_tr_ph_out, "bb.tr.ph/D");
+  Parse->Branch("bb.tr.r_x", &bb_tr_r_x_out, "bb.tr.r_x/D");
+  Parse->Branch("bb.tr.r_y", &bb_tr_r_y_out, "bb.tr.r_y/D");
+  Parse->Branch("bb.tr.r_th", &bb_tr_r_th_out, "bb.tr.r_th/D");
+  Parse->Branch("bb.tr.r_ph", &bb_tr_r_ph_out, "bb.tr.r_ph/D");
+
+  int bb_tr_n_out;
+  Parse->Branch("bb.tr.n", &bb_tr_n_out, "bb.tr.n/I");
+
+  double BB_E_over_p_out;
+  Parse->Branch("bb.e_over_p", &BB_E_over_p_out, "bb.e_over_p/D");
+
+  //kinematic variables
+  int run_out, mag_out;
+  Parse->Branch("runnum", &run_out, "runnum/I");
+  Parse->Branch("sbs.field", &mag_out, "sbs.field/I");
+
+  double proton_deflection_out, p_central_out;
+  Parse->Branch("proton_deflection", &proton_deflection_out, "proton_deflection/D");
+  Parse->Branch("p_central", &p_central_out, "p_centrial/D");
+
+  //cut variables
+  int passGlobal_out, HCalON_out;
+  Parse->Branch("passGlobal", &passGlobal_out,"passGlobal/I");
+  Parse->Branch("HCalON", &HCalON_out,"HCalON/I");
+
+  double hcal_sh_atime_diff_out;
+  Parse->Branch("adc.coin", &hcal_sh_atime_diff_out, "adc.coin/D");
+
+
+  //double coin_mean_out;
+  //double coin_sigma_out;
+  //double dyO_p_out;
+  //double dyO_n_out;
+  //double dysig_p_out;
+  //double dysig_n_out;
+  //double dysig_n_fac_out;
+  //double dysig_p_fac_out;
+  //double dxO_p_out;
+  //double dxO_n_out;
+  //double dxsig_p_out;
+  //double dxsig_n_out;
+  //double dxsig_n_fac_out;
+  //double dxsig_p_fac_out;
+  //double nsigx_fid_out;
+  //double nsigy_fid_out;
+  //double W2low_out;
+  //double W2high_out;
+  //int passW2_out;
+  //int passCoin_out;
+  //int passFid_out;
+  //setup new output tree branches
+  //Parse->Branch("coin_mean", &coin_mean_out, "coin_mean/D");
+  //Parse->Branch("coin_sigma", &coin_sigma_out, "coin_sigma/D");
+  //Parse->Branch("dyO_p", &dyO_p_out, "dyO_p/D");
+  //Parse->Branch("dyO_n", &dyO_n_out, "dyO_n/D");
+  //Parse->Branch("dysig_p", &dysig_p_out, "dysig_p/D");
+  //Parse->Branch("dysig_n", &dysig_n_out, "dysig_n/D");
+  //Parse->Branch("dysig_n_fac", &dysig_n_fac_out, "dysig_n_fac/D");
+  //Parse->Branch("dysig_p_fac", &dysig_p_fac_out, "dysig_p_fac/D");
+  //Parse->Branch("dxO_p", &dxO_p_out, "dxO_p/D");
+  //Parse->Branch("dxO_n", &dxO_n_out, "dxO_n/D");
+  //Parse->Branch("dxsig_p", &dxsig_p_out, "dxsig_p/D");
+  //Parse->Branch("dxsig_n", &dxsig_n_out, "dxsig_n/D");
+  //Parse->Branch("dxsig_n_fac", &dxsig_n_fac_out, "dxsig_n_fac/D");
+  //Parse->Branch("dxsig_p_fac", &dxsig_p_fac_out, "dxsig_p_fac/D");
+  //Parse->Branch("nsigx_fid", &nsigx_fid_out , "nsigx_fid/D");
+  //Parse->Branch("nsigy_fid", &nsigy_fid_out , "nsigy_fid/D");
+  //Parse->Branch("W2low", &W2low_out, "W2low/D");
+  //Parse->Branch("W2high", &W2high_out, "W2high/D");
+  //Parse->Branch("passW2", &passW2_out,"passW2/I");
+  //Parse->Branch("passCoin", &passCoin_out,"passCoin/I");
+  //Parse->Branch("passFid", &passFid_out, "passFid/I");
 
   //loop over the run numbers
   for(int j = 0; j<num_runs; j++){
-  
+
   //get run specific information
   data_object datData = myData[j];
   int run = datData.getRun();
@@ -313,37 +299,40 @@ void data_parse(const char *setup_file_name){
   double bbtheta = datData.getBBAngle_Rad();
   double sbsdist = datData.getSBSDist();
   TString input_file_name = datData.getInputFile();
-  
+
   //add the file to the TChain
   C = new TChain("T");
-  
+
   C->Add(input_file_name);
 
   // setting up ROOT tree branch addresses
   C->SetBranchStatus("*",0);
 
   //HCal general branches
-  double x_hcal,y_hcal,e_hcal,nclus_hcal,idx_hcal, nblkHCAL;
-  
+
+  double sbs_hcal_x,sbs_hcal_y,sbs_hcal_e,sbs_hcal_nclus,sbs_hcal_index,sbs_hcal_nblk;
+
   C->SetBranchStatus("sbs.hcal.nblk",1);
   C->SetBranchStatus("sbs.hcal.x",1);
   C->SetBranchStatus("sbs.hcal.y",1);
   C->SetBranchStatus("sbs.hcal.e",1);
-  C->SetBranchStatus("sbs.hcal.nclus",1); 
+  C->SetBranchStatus("sbs.hcal.nclus",1);
   C->SetBranchStatus("sbs.hcal.index",1);
 
-  C->SetBranchAddress("sbs.hcal.nblk",&nblkHCAL);
-  C->SetBranchAddress("sbs.hcal.x", &x_hcal);
-  C->SetBranchAddress("sbs.hcal.y", &y_hcal);
-  C->SetBranchAddress("sbs.hcal.e", &e_hcal);
-  C->SetBranchAddress("sbs.hcal.nclus", &nclus_hcal);
-  C->SetBranchAddress("sbs.hcal.index", &idx_hcal);
+  C->SetBranchAddress("sbs.hcal.nblk",&sbs_hcal_nblk);
+  C->SetBranchAddress("sbs.hcal.x", &sbs_hcal_x);
+  C->SetBranchAddress("sbs.hcal.y", &sbs_hcal_y);
+  C->SetBranchAddress("sbs.hcal.e", &sbs_hcal_e);
+  C->SetBranchAddress("sbs.hcal.nclus", &sbs_hcal_nclus);
+  C->SetBranchAddress("sbs.hcal.index", &sbs_hcal_index);
 
   //HCal cluster branches
-  double hcal_clus_adctime[exp_constants::maxclus], hcal_clus_e[exp_constants::maxclus], hcal_clus_x[exp_constants::maxclus], hcal_clus_y[exp_constants::maxclus],hcal_clus_nblk[exp_constants::maxclus], rowblkHCAL[exp_constants::maxclus], colblkHCAL[exp_constants::maxclus];
-  int num_hcal_clusid;
+
+  double sbs_hcal_clus_adctime[exp_constants::maxclus], sbs_hcal_clus_e[exp_constants::maxclus], sbs_hcal_clus_x[exp_constants::maxclus], sbs_hcal_clus_y[exp_constants::maxclus],sbs_hcal_clus_nblk[exp_constants::maxclus], sbs_hcal_clus_blk_row[exp_constants::maxclus], sbs_hcal_clus_blk_col[exp_constants::maxclus], sbs_hcal_clus_blk_id[exp_constants::maxclus], sbs_hcal_atimeblk;
+  int Ndata_sbs_hcal_clus_id;
 
   C->SetBranchStatus("sbs.hcal.clus.adctime",1);
+  C->SetBranchStatus("sbs.hcal.atimeblk",1);
   C->SetBranchStatus("sbs.hcal.clus.e",1);
   C->SetBranchStatus("sbs.hcal.clus.x",1);
   C->SetBranchStatus("sbs.hcal.clus.y",1);
@@ -352,66 +341,69 @@ void data_parse(const char *setup_file_name){
   C->SetBranchStatus("sbs.hcal.clus.nblk", 1);
   C->SetBranchStatus("sbs.hcal.clus_blk.row", 1);
   C->SetBranchStatus("sbs.hcal.clus_blk.col", 1);
+  C->SetBranchStatus("sbs.hcal.clus_blk.id", 1);
 
-  C->SetBranchAddress("sbs.hcal.clus.adctime", &hcal_clus_adctime);
-  C->SetBranchAddress("sbs.hcal.clus.e", &hcal_clus_e);
-  C->SetBranchAddress("sbs.hcal.clus.x", &hcal_clus_x);
-  C->SetBranchAddress("sbs.hcal.clus.y", &hcal_clus_y);
-  C->SetBranchAddress("Ndata.sbs.hcal.clus.id", &num_hcal_clusid);
-  C->SetBranchAddress("sbs.hcal.clus.nblk", &hcal_clus_nblk);
-
-  C->SetBranchAddress("sbs.hcal.clus_blk.row",&rowblkHCAL);
-  C->SetBranchAddress("sbs.hcal.clus_blk.col",&colblkHCAL);
+  C->SetBranchAddress("sbs.hcal.clus.adctime", &sbs_hcal_clus_adctime);
+  C->SetBranchAddress("sbs.hcal.atimeblk", &sbs_hcal_atimeblk);
+  C->SetBranchAddress("sbs.hcal.clus.e", &sbs_hcal_clus_e);
+  C->SetBranchAddress("sbs.hcal.clus.x", &sbs_hcal_clus_x);
+  C->SetBranchAddress("sbs.hcal.clus.y", &sbs_hcal_clus_y);
+  C->SetBranchAddress("Ndata.sbs.hcal.clus.id", &Ndata_sbs_hcal_clus_id);
+  C->SetBranchAddress("sbs.hcal.clus.nblk", &sbs_hcal_clus_nblk);
+  C->SetBranchAddress("sbs.hcal.clus_blk.row", &sbs_hcal_clus_blk_row);
+  C->SetBranchAddress("sbs.hcal.clus_blk.col", &sbs_hcal_clus_blk_col);
+  C->SetBranchAddress("sbs.hcal.clus_blk.id", &sbs_hcal_clus_blk_id);
 
   //BBCal shower
-  double atime_sh, e_sh, nclus_sh, nblk_sh; 
+
+  double bb_sh_atimeblk, bb_sh_e, bb_sh_nclus, bb_sh_nblk;
 
   C->SetBranchStatus( "bb.sh.atimeblk", 1 );
   C->SetBranchStatus( "bb.sh.e", 1 );
   C->SetBranchStatus( "bb.sh.nclus", 1 );
   C->SetBranchStatus( "bb.sh.nblk", 1 );
 
-  C->SetBranchAddress("bb.sh.atimeblk", &atime_sh);
-  C->SetBranchAddress("bb.sh.e", &e_sh);  
-  C->SetBranchAddress("bb.sh.nclus", &nclus_sh);
-  C->SetBranchAddress("bb.sh.nblk", &nblk_sh);
-
+  C->SetBranchAddress("bb.sh.atimeblk", &bb_sh_atimeblk);
+  C->SetBranchAddress("bb.sh.e", &bb_sh_e);
+  C->SetBranchAddress("bb.sh.nclus", &bb_sh_nclus);
+  C->SetBranchAddress("bb.sh.nblk", &bb_sh_nblk);
 
   //BBCal preshower
-  
-  double atime_ps, e_ps, nclus_ps, nblk_ps;
+
+  double bb_ps_atimeblk, bb_ps_e, bb_ps_nclus, bb_ps_nblk;
 
   C->SetBranchStatus( "bb.ps.atimeblk", 1 );
   C->SetBranchStatus( "bb.ps.e", 1 );
   C->SetBranchStatus( "bb.ps.nclus", 1 );
   C->SetBranchStatus( "bb.ps.nblk", 1 );
 
-  C->SetBranchAddress("bb.ps.atimeblk", &atime_ps);       
-  C->SetBranchAddress("bb.ps.e", &e_ps);
-  C->SetBranchAddress("bb.ps.nclus", &nclus_ps);
-  C->SetBranchAddress("bb.ps.nblk", &nblk_ps);
+  C->SetBranchAddress("bb.ps.atimeblk", &bb_ps_atimeblk);
+  C->SetBranchAddress("bb.ps.e", &bb_ps_e);
+  C->SetBranchAddress("bb.ps.nclus", &bb_ps_nclus);
+  C->SetBranchAddress("bb.ps.nblk", &bb_ps_nblk);
 
   //BBGEM hits
 
-  double gem_hits[maxtracks],gem_goodhits[maxtracks],gem_ChiSqr[maxtracks];  
+  double bb_gem_track_nhits[maxtracks],bb_gem_track_ngoodhits[maxtracks],bb_gem_track_chi2ndf[maxtracks];
 
   C->SetBranchStatus("bb.gem.track.nhits", 1);
   C->SetBranchStatus("bb.gem.track.ngoodhits",1);
   C->SetBranchStatus("bb.gem.track.chi2ndf",1);
 
-  C->SetBranchAddress("bb.gem.track.nhits",&gem_hits);
-  C->SetBranchAddress("bb.gem.track.ngoodhits",&gem_goodhits);
-  C->SetBranchAddress("bb.gem.track.chi2ndf",&gem_ChiSqr);
+  C->SetBranchAddress("bb.gem.track.nhits",&bb_gem_track_nhits);
+  C->SetBranchAddress("bb.gem.track.ngoodhits",&bb_gem_track_ngoodhits);
+  C->SetBranchAddress("bb.gem.track.chi2ndf",&bb_gem_track_chi2ndf);
+
   // track branches
 
-  double ntrack, tr_px[maxtracks], tr_py[maxtracks], tr_pz[maxtracks], tr_p[maxtracks], tr_x[maxtracks], tr_y[maxtracks], tr_vx[maxtracks], tr_vy[maxtracks], tr_vz[maxtracks], tr_r_x[maxtracks], tr_r_y[maxtracks],tr_r_th[maxtracks], tr_r_ph[maxtracks], tr_th[maxtracks], tr_ph[maxtracks];
+  double bb_tr_n, bb_tr_px[maxtracks], bb_tr_py[maxtracks], bb_tr_pz[maxtracks], bb_tr_p[maxtracks], bb_tr_x[maxtracks], bb_tr_y[maxtracks], bb_tr_vx[maxtracks], bb_tr_vy[maxtracks], bb_tr_vz[maxtracks], bb_tr_r_x[maxtracks], bb_tr_r_y[maxtracks],bb_tr_r_th[maxtracks], bb_tr_r_ph[maxtracks], bb_tr_th[maxtracks], bb_tr_ph[maxtracks];
 
   C->SetBranchStatus("bb.tr.n",1);
   C->SetBranchStatus("bb.tr.px",1);
-  C->SetBranchStatus("bb.tr.py",1);  
+  C->SetBranchStatus("bb.tr.py",1);
   C->SetBranchStatus("bb.tr.pz",1);
   C->SetBranchStatus("bb.tr.p",1);
-  C->SetBranchStatus("bb.tr.x",1);  
+  C->SetBranchStatus("bb.tr.x",1);
   C->SetBranchStatus("bb.tr.y",1);
   C->SetBranchStatus("bb.tr.vx",1);
   C->SetBranchStatus("bb.tr.vy",1);
@@ -423,26 +415,45 @@ void data_parse(const char *setup_file_name){
   C->SetBranchStatus("bb.tr.r_x",1);
   C->SetBranchStatus("bb.tr.r_y",1);
 
-  C->SetBranchAddress("bb.tr.n",&ntrack);
-  C->SetBranchAddress("bb.tr.px",&tr_px);
-  C->SetBranchAddress("bb.tr.py",&tr_py);
-  C->SetBranchAddress("bb.tr.pz",&tr_pz);
-  C->SetBranchAddress("bb.tr.p",&tr_p);
-  C->SetBranchAddress("bb.tr.x",&tr_x);
-  C->SetBranchAddress("bb.tr.y",&tr_y);
-  C->SetBranchAddress("bb.tr.vx",&tr_vx);
-  C->SetBranchAddress("bb.tr.vy",&tr_vy);
-  C->SetBranchAddress("bb.tr.vz",&tr_vz);
-  C->SetBranchAddress("bb.tr.th",&tr_th);
-  C->SetBranchAddress("bb.tr.ph",&tr_ph);
-  C->SetBranchAddress("bb.tr.r_th",&tr_r_th);
-  C->SetBranchAddress("bb.tr.r_ph",&tr_r_ph);
-  C->SetBranchAddress("bb.tr.r_x",&tr_r_x);
-  C->SetBranchAddress("bb.tr.r_y",&tr_r_y);
+  C->SetBranchAddress("bb.tr.n",&bb_tr_n);
+  C->SetBranchAddress("bb.tr.px",&bb_tr_px);
+  C->SetBranchAddress("bb.tr.py",&bb_tr_py);
+  C->SetBranchAddress("bb.tr.pz",&bb_tr_pz);
+  C->SetBranchAddress("bb.tr.p",&bb_tr_p);
+  C->SetBranchAddress("bb.tr.x",&bb_tr_x);
+  C->SetBranchAddress("bb.tr.y",&bb_tr_y);
+  C->SetBranchAddress("bb.tr.vx",&bb_tr_vx);
+  C->SetBranchAddress("bb.tr.vy",&bb_tr_vy);
+  C->SetBranchAddress("bb.tr.vz",&bb_tr_vz);
+  C->SetBranchAddress("bb.tr.th",&bb_tr_th);
+  C->SetBranchAddress("bb.tr.ph",&bb_tr_ph);
+  C->SetBranchAddress("bb.tr.r_th",&bb_tr_r_th);
+  C->SetBranchAddress("bb.tr.r_ph",&bb_tr_r_ph);
+  C->SetBranchAddress("bb.tr.r_x",&bb_tr_r_x);
+  C->SetBranchAddress("bb.tr.r_y",&bb_tr_r_y);
+
+  //grinch branches
+
+  double bb_grinch_tdc_clus_trackindex, bb_grinch_tdc_clus_size, bb_grinch_tdc_hit_time[maxtracks], bb_grinch_tdc_hit_pmtnum[maxtracks], bb_grinch_tdc_hit_amp[maxtracks];
+  int Ndata_bb_grinch_tdc_hit_time;
+
+  C->SetBranchStatus("bb.grinch_tdc.clus.trackindex", 1);
+  C->SetBranchStatus("bb.grinch_tdc.clus.size", 1);
+  C->SetBranchStatus("bb.grinch_tdc.hit.time", 1);
+  C->SetBranchStatus("bb.grinch_tdc.hit.pmtnum", 1);
+  C->SetBranchStatus("bb.grinch_tdc.hit.amp", 1);
+  C->SetBranchStatus("Ndata.bb.grinch_tdc.hit.time", 1);
+
+  C->SetBranchAddress("bb.grinch_tdc.clus.trackindex", &bb_grinch_tdc_clus_trackindex);
+  C->SetBranchAddress("bb.grinch_tdc.clus.size", &bb_grinch_tdc_clus_size);
+  C->SetBranchAddress("bb.grinch_tdc.hit.time", &bb_grinch_tdc_hit_time);
+  C->SetBranchAddress("bb.grinch_tdc.hit.pmtnum", &bb_grinch_tdc_hit_pmtnum);
+  C->SetBranchAddress("bb.grinch_tdc.hit.amp", &bb_grinch_tdc_hit_amp);
+  C->SetBranchAddress("Ndata.bb.grinch_tdc.hit.time", &Ndata_bb_grinch_tdc_hit_time);
 
   //ekine branches
 
-  double ekine_Q2, ekine_W2, ekine_eps, ekine_nu, ekine_qx, ekine_qy, ekine_qz;
+  double e_kine_Q2, e_kine_W2, e_kine_epsilon, e_kine_nu, e_kine_q_x, e_kine_q_y, e_kine_q_z;
 
   C->SetBranchStatus("e.kine.Q2",1);
   C->SetBranchStatus("e.kine.W2",1);
@@ -452,17 +463,17 @@ void data_parse(const char *setup_file_name){
   C->SetBranchStatus("e.kine.q_y",1);
   C->SetBranchStatus("e.kine.q_z",1);
 
-  C->SetBranchAddress("e.kine.Q2", &ekine_Q2);
-  C->SetBranchAddress("e.kine.W2", &ekine_W2); 
-  C->SetBranchAddress("e.kine.epsilon", &ekine_eps);
-  C->SetBranchAddress("e.kine.nu", &ekine_nu);
-  C->SetBranchAddress("e.kine.q_x", &ekine_qx);
-  C->SetBranchAddress("e.kine.q_y", &ekine_qy);
-  C->SetBranchAddress("e.kine.q_z", &ekine_qz);
+  C->SetBranchAddress("e.kine.Q2", &e_kine_Q2);
+  C->SetBranchAddress("e.kine.W2", &e_kine_W2);
+  C->SetBranchAddress("e.kine.epsilon", &e_kine_epsilon);
+  C->SetBranchAddress("e.kine.nu", &e_kine_nu);
+  C->SetBranchAddress("e.kine.q_x", &e_kine_q_x);
+  C->SetBranchAddress("e.kine.q_y", &e_kine_q_y);
+  C->SetBranchAddress("e.kine.q_z", &e_kine_q_z);
 
   //global cut branches
   //already handled above
-  
+
   //setup global cut formula
   TTreeFormula *GlobalCut = new TTreeFormula( "GlobalCut", globalcut, C );
 
@@ -471,7 +482,7 @@ void data_parse(const char *setup_file_name){
   TVector3 hcal_xaxis = physics::getHCal_xaxis();
   TVector3 hcal_yaxis = physics::getHCal_yaxis(hcal_xaxis,hcal_zaxis);
   //define HCal origin
-  TVector3 hcal_origin = physics::getHCal_origin(hcaldist,hcal_offset,hcal_xaxis,hcal_zaxis);  
+  TVector3 hcal_origin = physics::getHCal_origin(hcaldist,hcal_offset,hcal_xaxis,hcal_zaxis);
   //mean energy loss of the beam before scattering
   double Eloss_outgoing = physics::getEloss_outgoing(bbtheta,target);
 
@@ -481,9 +492,9 @@ void data_parse(const char *setup_file_name){
   //ttree formula variables
   int treenum = 0, currenttreenum = 0;
 
-  	//event loop 
+  	//event loop
   	while(C->GetEntry(nevent++)){
-	
+
 	//progress tracker
 	cout << "Processing run " <<  j << "/" << num_runs << " run number " << run << " event " << nevent << "/" << nentries << "\r";
 	cout.flush();
@@ -496,28 +507,28 @@ void data_parse(const char *setup_file_name){
     	}
         //Is true if failed global cut
     	bool failglobal = cuts::failedGlobal(GlobalCut);
-	
+
 	///////////
 	//Electron-arm physics calculations
-	
+
 	//BB E/p calculated. Should be the same as the tree variable. But it does not cause seg faults
-	double BB_E_over_p = (e_sh+e_ps)/tr_p[0];
+	double BB_E_over_p = (bb_sh_e+bb_ps_e)/bb_tr_p[0];
 
 	//correct beam energy from vertex information
-	double Eloss = physics::getEloss(tr_vz[0],target);
+	double Eloss = physics::getEloss(bb_tr_vz[0],target);
 	double Ecorr = physics::getEcorr(Ebeam,Eloss);
 
 	//make the vertex, assuming only beam direction
-	TVector3 vertex = physics::getVertex(tr_vz[0]);
+	TVector3 vertex = physics::getVertex(bb_tr_vz[0]);
 
 	//reconstructed momentum from track momentum information, corrected for mean energy loss. Still need to include losses from Al shielding or target windows later
-	double pcorr = physics::getp_recon_corr(tr_p[0],Eloss_outgoing); 
+	double pcorr = physics::getp_recon_corr(bb_tr_p[0],Eloss_outgoing);
 
         //four momentum vector for electron beam with correted Energy value
         TLorentzVector pbeam = physics::getpBeam(Ecorr);
 
 	//four momentum for scattered electron based on reconstruction
-	TLorentzVector p_eprime = physics::getp_eprime(tr_px[0],tr_py[0],tr_pz[0],tr_p[0],pcorr);
+	TLorentzVector p_eprime = physics::getp_eprime(bb_tr_px[0],bb_tr_py[0],bb_tr_pz[0],bb_tr_p[0],pcorr);
 
 	//four vector for target
 	TLorentzVector p_targ = physics::getp_targ(target);
@@ -531,11 +542,11 @@ void data_parse(const char *setup_file_name){
 
 	//Phi for scattered electron using reconstructed track momentum
 	double ephi = physics::get_ephi(p_eprime);
-	
+
 	//central momentum reconstructed from track angles and beam energy
 	double pcentral = physics::get_pcentral(pbeam,etheta,target);
 
-	//assume coplanarity, get the expected phi for the nucleon 
+	//assume coplanarity, get the expected phi for the nucleon
 	double phi_N_exp = physics::get_phinucleon(ephi,physics_constants::PI);
 
 	//Calculate Mott cross section for this event
@@ -547,9 +558,9 @@ void data_parse(const char *setup_file_name){
 	* v3 - Use reconstructed angles as independent qty (usually preferable given GEM precision at most kinematics)
  	* v4 - Use reconstructed momentum as independent qty */
 
-	
+
 	//four momentum transferred squared
-	double Q2; 
+	double Q2;
 
   	//four vector, scattered nucleon momentum
   	TLorentzVector p_N;
@@ -559,7 +570,7 @@ void data_parse(const char *setup_file_name){
 	double p_N_exp;
 
 	//energy transfer
-	double nu;	
+	double nu;
 
 	//scattered nucleon expected angle theta
 	double theta_N_exp;
@@ -573,7 +584,7 @@ void data_parse(const char *setup_file_name){
 	//polarization of the virtual photon
 	double epsilon;
 
-	//conditional to determine remaining e-arm related calculations. 
+	//conditional to determine remaining e-arm related calculations.
 		if(e_method == 1){
 		//v1
 		Q2 = physics::getQ2(q);
@@ -585,11 +596,11 @@ void data_parse(const char *setup_file_name){
 		epsilon = physics::get_epsilon(tau,etheta);
 		}else if(e_method == 2){
 		//v2
-		Q2 = physics::getQ2(ekine_Q2);
-		W2 = physics::getW2(ekine_W2);
-		nu = physics::getnu(ekine_nu);
+		Q2 = physics::getQ2(e_kine_Q2);
+		W2 = physics::getW2(e_kine_W2);
+		nu = physics::getnu(e_kine_nu);
 		p_N_exp = physics::get_pNexp(nu,target);
-		theta_N_exp = physics::get_thetaNexp(pbeam,pcentral,etheta,p_N_exp);	
+		theta_N_exp = physics::get_thetaNexp(pbeam,pcentral,etheta,p_N_exp);
 		p_Nhat = physics::get_pNhat(theta_N_exp,phi_N_exp);
 		p_N = physics::get_pN(p_N_exp,p_Nhat,nu,p_targ);
 		tau = physics::get_tau(Q2,target);
@@ -638,7 +649,7 @@ void data_parse(const char *setup_file_name){
 
 	//gets expected location of scattered nucleon assuming straight line projections from BB track, y-direction
         double yhcal_expect = physics::get_yhcalexpect(hcal_intersect,hcal_origin,hcal_yaxis);
-	
+
 	//Calculate expected proton deflection with a somewhat crude module
 	double BdL = physics::getBdL(sbs_field,kin,pass);
 	double proton_deflection = physics::get_protonDeflection(BdL,p_N.Vect().Mag(),hcaldist,sbsdist);
@@ -646,37 +657,42 @@ void data_parse(const char *setup_file_name){
 	//////////////////////
 	//INTIME CLUSTER ANALYSIS
 	//Requires that it has the greatest hcal cluster energy and that hcal cluster analog time is in coincidence with bbcal analog time
-	
+
 	//intime cluster selection analysis, intime algorithm
-	int intime_idx = physics::cluster_intime_select(num_hcal_clusid,hcal_clus_adctime,atime_sh,hcal_clus_e,coin_mean,coin_sig_fac,coin_profile_sig,hcalemin);
-	
+	//int intime_idx = physics::cluster_intime_select(Ndata_sbs_hcal_clus_id,sbs_hcal_clus_adctime,bb_sh_atimeblk,sbs_hcal_clus_e,coin_mean,coin_sig_fac,coin_profile_sig,hcalemin);
+
 	//Assume that the itime analysis is sufficient to find the best cluster in HCal
-	int clus_idx_best = intime_idx;
+	//int clus_idx_best = intime_idx;
 
 	//calculate important information from best cluster
-	double xhcal_bestclus = hcal_clus_x[clus_idx_best];
- 	double yhcal_bestclus = hcal_clus_y[clus_idx_best];
-	double xhcal_pclus = hcal_clus_x[0];
-        double yhcal_pclus = hcal_clus_y[0];
-	double dx_bestclus = physics::get_dx(xhcal_bestclus,xhcal_expect);
-	double dx_pclus = physics::get_dx(xhcal_pclus,xhcal_expect);
- 	double dy_bestclus = physics::get_dy(yhcal_bestclus,yhcal_expect);	
-	double hcal_atime_bestclus = hcal_clus_adctime[clus_idx_best];
-	double coin_bestclus = hcal_atime_bestclus - atime_sh;
-	double coin_pclus = hcal_clus_adctime[0] - atime_sh;
-	double hcal_e_bestclus = hcal_clus_e[clus_idx_best];
-	int hcal_nblk_bestclus = (int) hcal_clus_nblk[clus_idx_best];	
+  // HCAL FIRST CLUSTER IS ALREADY "BEST" CLUSTER, NO NEED TO DEFINE IT
+	//double xhcal_bestclus = sbs_hcal_clus_x[clus_idx_best];
+ 	//double yhcal_bestclus = sbs_hcal_clus_y[clus_idx_best];
+	//double xhcal_pclus = sbs_hcal_clus_x[0];
+  //double yhcal_pclus = sbs_hcal_clus_y[0];
+	//double dx_bestclus = physics::get_dx(xhcal_bestclus,xhcal_expect);
+	//double dx_pclus = physics::get_dx(xhcal_pclus,xhcal_expect);
+ 	//double dy_bestclus = physics::get_dy(yhcal_bestclus,yhcal_expect);
+
+  double dx = physics::get_dx(sbs_hcal_x,xhcal_expect);
+  double dy = physics::get_dx(sbs_hcal_y,yhcal_expect);
+
+	//double hcal_atime_bestclus = sbs_hcal_clus_adctime[clus_idx_best];
+	double coin = sbs_hcal_atimeblk - bb_sh_atimeblk;
+	//double coin_pclus = sbs_hcal_clus_adctime[0] - bb_sh_atimeblk;
+	//double hcal_e_bestclus = sbs_hcal_clus_e[clus_idx_best];
+	//int hcal_nblk_bestclus = (int) sbs_hcal_clus_nblk[clus_idx_best];
 
 	//calculate the number of sigma away from fiducial boundaries. Store info for later
-        double nsigx_fid = cuts::calculate_nsigma_fid_x(xhcal_expect,dxsig_p,dxsig_n,dx_pn,hcalaa);
-        double nsigy_fid = cuts::calculate_nsigma_fid_y(yhcal_expect,dysig_p,hcalaa);
+        //double nsigx_fid = cuts::calculate_nsigma_fid_x(xhcal_expect,dxsig_p,dxsig_n,dx_pn,hcalaa);
+        //double nsigy_fid = cuts::calculate_nsigma_fid_y(yhcal_expect,dysig_p,hcalaa);
 
-	
+
 	//setup booleans for cuts later. Save boolean values to tree
 	//global is above
-	
+
 	//HCal active area
-	bool hcalaa_ON = cuts::hcalaa_ON(xhcal_bestclus,yhcal_bestclus,hcalaa);
+	bool hcalaa_ON = cuts::hcalaa_ON(sbs_hcal_x,sbs_hcal_y,hcalaa);
 	bool hcalaa_ON_exp = cuts::hcalaa_ON(xhcal_expect,yhcal_expect,hcalaa);
 
 	//W2 elastic boolean
@@ -686,99 +702,105 @@ void data_parse(const char *setup_file_name){
 	bool antiW2_morehigh = W2 > (W2_high+1.1);
 
 	//good dy boolean
-	bool good_dy = cuts::good_dy(dy_bestclus,dyO_p,dysig_cut_fac,dysig_cut);
+	//bool good_dy = cuts::good_dy(dy_bestclus,dyO_p,dysig_cut_fac,dysig_cut);
 
 	//good coincidence time cut
-	bool passCoin = cuts::passCoin(coin_bestclus,coin_mean,coin_sig_fac,coin_sig);
+	//bool passCoin = cuts::passCoin(coin_bestclus,coin_mean,coin_sig_fac,coin_sig);
 	//Used for coin anti cut
-	bool passCoin_pclus = cuts::passCoin(coin_pclus,coin_mean,coin_sig_fac,coin_sig);
-	
+	//bool passCoin_pclus = cuts::passCoin(coin_pclus,coin_mean,coin_sig_fac,coin_sig);
+
 	//good fiducial cut
-	bool passFid = cuts::hcalfid_IN(xhcal_expect,yhcal_expect,dx_pn,hcalfid);	
+	//bool passFid = cuts::hcalfid_IN(xhcal_expect,yhcal_expect,dx_pn,hcalfid);
 
 	//pass HCal E
-	bool passHCalE = cuts::passHCalE(hcal_e_bestclus,hcalemin);
+	//bool passHCalE = cuts::passHCalE(hcal_e_bestclus,hcalemin);
 
 	//pass HCal num clus
-	bool passHCal_Nclus = cuts::passHCal_NClus(nclus_hcal,hcalnclusmin);
+	//bool passHCal_Nclus = cuts::passHCal_NClus(sbs_hcal_nclus,hcalnclusmin);
 
 	//pass NSig Fid check
-	bool passNSigFid = cuts::passNsigFid(nsigx_fid,nsigy_fid);
+	//bool passNSigFid = cuts::passNsigFid(nsigx_fid,nsigy_fid);
 
 	//Fill analysis tree variables before making cuts
-	dx_out = dx_bestclus;
- 	dy_out = dy_bestclus;
-  	xexp_out = xhcal_expect;
-  	yexp_out = yhcal_expect;
-  	xhcal_out = xhcal_bestclus;
- 	yhcal_out = yhcal_bestclus;
-  	W2_out = W2;
-  	nu_out = nu;
+	//dx_out = dx_bestclus;
+  dx_out = dx;
+ 	//dy_out = dy_bestclus;
+  dy_out = dy;
+  xexp_out = xhcal_expect;
+  yexp_out = yhcal_expect;
+  sbs_hcal_x_out = sbs_hcal_x;
+ 	sbs_hcal_y_out = sbs_hcal_y;
+  W2_out = W2;
+  nu_out = nu;
 	tau_out = tau;
 	epsilon_out = epsilon;
 	pcorr_out = pcorr;
 	mott_out = Mott_CS;
-  	ehcal_out = hcal_e_bestclus;
-  	ehcal_tree_out = e_hcal;
-	BBtot_e_out = e_sh+e_ps;
-  	BBsh_e_out = e_sh;
-  	BBps_e_out = e_ps;
-  	hcal_atime_out = hcal_atime_bestclus;
-  	BBsh_atime_out = atime_sh;
-  	BBps_atime_out = atime_ps;
-  	BBgem_nhits_out = gem_hits[0];
-  	BBgem_ngoodhits_out = gem_goodhits[0];
-	BBgem_chi2ndf_out = gem_ChiSqr[0];
-	BBtr_x_out = tr_x[0];
-  	BBtr_y_out = tr_y[0];
-  	BBtr_p_out = tr_p[0];
-  	BBtr_vz_out = tr_vz[0];
-	BB_E_over_p_out = BB_E_over_p;
-	BBtr_th_out = tr_th[0];
-	BBtr_ph_out = tr_ph[0];
-	BBtr_r_x_out = tr_r_x[0];
-	BBtr_r_y_out = tr_r_y[0];
-	BBtr_r_th_out = tr_r_th[0];
-	BBtr_r_ph_out = tr_r_ph[0];
-	coin_mean_out = coin_mean;
-  	coin_sigma_out = coin_sig;
-  	dyO_p_out = dyO_p;
-  	dyO_n_out = dyO_n;
-  	dysig_p_out = dysig_p;
-  	dysig_n_out = dysig_n;
-  	dysig_n_fac_out = dysig_n_fac;
-  	dysig_p_fac_out = dysig_p_fac;
-  	dxO_p_out = dxO_p;
-  	dxO_n_out = dxO_n;
-  	dxsig_p_out = dxsig_p;
-  	dxsig_n_out = dxsig_n;
-  	dxsig_n_fac_out = dxsig_n_fac;
- 	dxsig_p_fac_out = dxsig_p_fac;
-  	nsigx_fid_out = nsigx_fid;
-	nsigy_fid_out = nsigy_fid;
-	W2low_out = W2_low;	
-	W2high_out = W2_high;
-	num_hcal_clusid_out = num_hcal_clusid ;
- 	hcal_clus_blk_out = hcal_nblk_bestclus;
-  	nclus_hcal_out = nclus_hcal;
-	BBsh_nclus_out = (int) nclus_sh;
-	BBsh_nblk_out = (int) nblk_sh;
-	BBps_nclus_out = (int) nclus_ps;
-        BBps_nblk_out = (int) nblk_ps;
-	BBtr_n_out = ntrack;
-  	passGlobal_out = (int) !failglobal;
+
+  sbs_hcal_e_out = sbs_hcal_e;
+
+  BBtot_e_out = bb_sh_e+bb_ps_e;
+  bb_sh_e_out = bb_sh_e;
+  bb_ps_e_out = bb_ps_e;
+
+  sbs_hcal_atimeblk_out = sbs_hcal_atimeblk;
+
+  bb_sh_atimeblk_out = bb_sh_atimeblk;
+  bb_ps_atimeblk_out = bb_ps_atimeblk;
+
+  bb_gem_track_nhits_out = bb_gem_track_nhits[0];
+  bb_gem_track_ngoodhits_out = bb_gem_track_ngoodhits[0];
+	bb_gem_track_chi2ndf_out = bb_gem_track_chi2ndf[0];
+
+  bb_tr_x_out = bb_tr_x[0];
+  bb_tr_y_out = bb_tr_y[0];
+  bb_tr_p_out = bb_tr_p[0];
+  bb_tr_vz_out = bb_tr_vz[0];
+
+  BB_E_over_p_out = BB_E_over_p;
+
+  bb_tr_th_out = bb_tr_th[0];
+	bb_tr_ph_out = bb_tr_ph[0];
+	bb_tr_r_x_out = bb_tr_r_x[0];
+	bb_tr_r_y_out = bb_tr_r_y[0];
+	bb_tr_r_th_out = bb_tr_r_th[0];
+	bb_tr_r_ph_out = bb_tr_r_ph[0];
+
+	Ndata_sbs_hcal_clus_id_out = Ndata_sbs_hcal_clus_id ;
+  sbs_hcal_nclus_out = sbs_hcal_nclus;
+
+  Ndata_bb_grinch_tdc_hit_time_out = Ndata_bb_grinch_tdc_hit_time;
+  bb_grinch_tdc_clus_size_out = bb_grinch_tdc_clus_size;
+  bb_grinch_tdc_clus_trackindex_out = bb_grinch_tdc_clus_trackindex;
+  for(int iclus = 0; iclus < Ndata_bb_grinch_tdc_hit_time; iclus++)
+  {
+    bb_grinch_tdc_hit_time_out[iclus] = bb_grinch_tdc_hit_time[iclus];
+    bb_grinch_tdc_hit_pmtnum_out[iclus] = bb_grinch_tdc_hit_pmtnum[iclus];
+    bb_grinch_tdc_hit_amp_out[iclus] = bb_grinch_tdc_hit_amp[iclus];
+  }
+
+  bb_sh_nclus_out = (int) bb_sh_nclus;
+	bb_sh_nblk_out = (int) bb_sh_nblk;
+	bb_ps_nclus_out = (int) bb_ps_nclus;
+  bb_ps_nblk_out = (int) bb_ps_nblk;
+	bb_tr_n_out = bb_tr_n;
+
+  passGlobal_out = (int) !failglobal;
 	HCalON_out = (int) hcalaa_ON;
-	passW2_out = (int) goodW2;
-	passCoin_out = (int) passCoin;
-	passFid_out = (int) passFid;
-  	run_out = run ;
-  	mag_out = field;
-	hcal_sh_atime_diff_out = coin_bestclus;
+
+  run_out = run ;
+  mag_out = field;
+
+  hcal_sh_atime_diff_out = coin;
 	proton_deflection_out = proton_deflection;
 	p_central_out = pcentral;
-	nblkHCAL_out = nblkHCAL;
-	rowblkHCAL_out = rowblkHCAL[clus_idx_best];
-	colblkHCAL_out = colblkHCAL[clus_idx_best];
+
+  sbs_hcal_nblk_out = sbs_hcal_nblk;
+	//sbs_hcal_clus_blk_row_out = sbs_hcal_clus_blk_row[clus_idx_best];
+  sbs_hcal_clus_blk_row_out = sbs_hcal_clus_blk_row[0];
+	//sbs_hcal_clus_blk_col_out = sbs_hcal_clus_blk_col[clus_idx_best];
+  sbs_hcal_clus_blk_col_out = sbs_hcal_clus_blk_col[0];
+  sbs_hcal_clus_blk_id_out = (int) sbs_hcal_clus_blk_id[0];
 
 	//For physics extraction
 	Ebeam_corr_out = Ecorr;
@@ -786,20 +808,20 @@ void data_parse(const char *setup_file_name){
 	etheta_out = etheta;
 	p_N_out = p_N.Vect().Mag();
 	Q2_out = Q2;
-	
+
 	//Fill the analysis tree
 	Parse->Fill();
-	
+
 	}//end event loop
 
 	// reset chain for the next run config
 	C->Reset();
-  
+
   }//end loop over the run numbers
-  
+
   //Write everything to output file
   fout->Write();
-   
+
   // Send time efficiency report to console
   cout << "CPU time elapsed = " << watch->CpuTime() << " s = " << watch->CpuTime()/60.0 << " min. Real time = " << watch->RealTime() << " s = " << watch->RealTime()/60.0 << " min." << endl;
 
