@@ -6,7 +6,7 @@
 namespace DBparse {
 
   TString DB_dir = "/w/halla-scshelf2102/sbs/ktevans/KateJackSBSAnalysis/config/";
-  TString DB_corr_dir = "/w/halla-scshelf2102/sbs/ktevans/KateJackSBSAnalysis/config/corrections/";
+  //TString DB_corr_dir = "/w/halla-scshelf2102/sbs/ktevans/KateJackSBSAnalysis/config/corrections/";
   
   std::map<TString, TString> DBFileMap {
     {"He3 Polarization", "He3_pol.csv"}
