@@ -1,5 +1,4 @@
 #include "../include/DBparse.h"
-#include "../include/Analysis.h"
 
 namespace DBparse {
 
