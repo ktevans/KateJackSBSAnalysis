@@ -18,6 +18,7 @@
 #include "TVector3.h"
 #include "TMath.h"
 #include "TString.h"
+#include "TDatime.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -562,7 +563,7 @@ void data_parse(const char *setup_file_name){
         int time_rel = g_evtime*time_interval*1e-9/60; // in min, rounded
 	TDatime time_abs(run_time_unix + time_rel * 60);
 
-        cout << time_abs << endl;
+        cout << time_abs.AsString() << endl;
 
 	auto it = DBInfo.He3Pol.find(time_abs);
 	if(it == DBInfo.He3Pol.end())
