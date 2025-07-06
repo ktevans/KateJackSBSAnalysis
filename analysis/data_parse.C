@@ -543,7 +543,7 @@ void data_parse(const char *setup_file_name){
   	while(C->GetEntry(nevent++)){
 
 	//progress tracker
-	cout << "Processing run " <<  j << "/" << num_runs << " run number " << run << " event " << nevent << "/" << nentries << "\r";
+	cout << "Processing run " <<  j << "/" << num_runs << " run number " << run << " event " << nevent << "/" << nentries << "\r" << endl;
 	cout.flush();
 
 	//single loop global cut
