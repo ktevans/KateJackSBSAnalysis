@@ -22,7 +22,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
-#include "../include/DBparse.h"
+#include "../src/DBparse.C"
 #include "../src/utility.C"
 #include "../src/exp_constants.C"
 #include "../src/kinematic_obj.C"
