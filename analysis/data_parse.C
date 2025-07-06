@@ -555,12 +555,13 @@ void data_parse(const char *setup_file_name){
           auto* Run_Data = C->GetFile()->Get<THaRunBase>("Run_Data");
           TDatime run_time = Run_Data->GetDate();
           run_time.Set(run_time.GetYear(),run_time.GetMonth(),run_time.GetDay(),run_time.GetHour(),run_time.GetMinute(),0);
+          cout << run_time.AsString() << endl;
           run_time_unix = run_time.Convert();
     	}
         //Is true if failed global cut
     	bool failglobal = cuts::failedGlobal(GlobalCut);
 
-        cout << ctime(&run_time) << endl;
+        //cout << ctime(&run_time_unix) << endl;
 
         double time_interval = 4; //in ns -> shouldn't this be 2 for GEn?
         int time_rel = g_evtime*time_interval*1e-9/60; // in min, rounded
