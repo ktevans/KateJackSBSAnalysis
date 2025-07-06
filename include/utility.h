@@ -123,5 +123,8 @@ namespace utility{
 
   //Function that puts TH2D minimally on Canvas
   TCanvas* printTH2D(TH2D* myHisto, TString title);
+
+  //Function to set a time from a string
+  TDatime SetTime(string time_str);
 }
 #endif
