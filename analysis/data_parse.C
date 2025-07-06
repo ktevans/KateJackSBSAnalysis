@@ -555,8 +555,8 @@ void data_parse(const char *setup_file_name){
           auto* Run_Data = C->GetFile()->Get<THaRunBase>("Run_Data");
           TDatime run_time = Run_Data->GetDate();
           run_time.Set(run_time.GetYear(),run_time.GetMonth(),run_time.GetDay(),run_time.GetHour(),run_time.GetMinute(),0);
-          cout << endl;
-          cout << run_time.AsString() << endl;
+          //cout << endl;
+          //cout << run_time.AsString() << endl;
           run_time_unix = run_time.Convert();
     	}
         //Is true if failed global cut
