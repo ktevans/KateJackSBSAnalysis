@@ -22,6 +22,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include "../include/DBparse.h"
 #include "../src/utility.C"
 #include "../src/exp_constants.C"
 #include "../src/kinematic_obj.C"
@@ -29,7 +30,6 @@
 #include "../src/cuts.C"
 #include "../src/physics.C"
 #include "../src/parse_config.C"
-#include "../include/DBparse.h"
 
 DBparse::DBInfo DBInfo;
 
