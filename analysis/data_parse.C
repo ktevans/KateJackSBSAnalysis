@@ -12,6 +12,8 @@
 #include "TH2D.h"
 #include "TCut.h"
 #include "TEventList.h"
+#include "TStopwatch.h"
+#include "TTreeFormula.h"
 #include "TLorentzVector.h"
 #include "TVector3.h"
 #include "TMath.h"
