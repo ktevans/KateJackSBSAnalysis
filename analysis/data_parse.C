@@ -182,7 +182,7 @@ void data_parse(const char *setup_file_name){
   Parse->Branch("he3pol", &He3Pol_out, "he3pol/D");
   Parse->Branch("g.trigbits", &g_trigbits_out, "g.trigbits/D");
   Parse->Branch("g.evtime", &g_evtime_out, "g.evtime/D");
-  Parse->Branch("helicity", &gelicity_out, "helicity/I");
+  Parse->Branch("helicity", &helicity_out, "helicity/I");
 
   TDatime datetime_out;
   Parse->Branch("datetime", "TDatime", &datetime_out);
