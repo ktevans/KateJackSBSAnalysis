@@ -560,7 +560,7 @@ void data_parse(const char *setup_file_name){
         //Is true if failed global cut
     	bool failglobal = cuts::failedGlobal(GlobalCut);
 
-        cout << ctime(run_time_unix) << endl;
+        cout << ctime(&run_time_unix) << endl;
 
         double time_interval = 4; //in ns -> shouldn't this be 2 for GEn?
         int time_rel = g_evtime*time_interval*1e-9/60; // in min, rounded
