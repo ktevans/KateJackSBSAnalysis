@@ -56,7 +56,7 @@ namespace DBparse {
 	}
 	if(it->first == "He3 Polarization"){// He3 polarization DB
 	  if(iline == 1) continue;
-	  request.He3Pol.insert(std::make_pair(Utilities::SetTime(val[0]),stod(val[1])));
+	  request.He3Pol.insert(std::make_pair(utility::SetTime(val[0]),stod(val[1])));
 	}// end He3 Pol
       }      
     }
