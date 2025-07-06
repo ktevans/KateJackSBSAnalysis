@@ -535,6 +535,7 @@ void data_parse(const char *setup_file_name){
 
   //ttree formula variables
   int treenum = 0, currenttreenum = 0;
+  time_t run_time_unix;
 
   	//event loop
   	while(C->GetEntry(nevent++)){
