@@ -27,6 +27,28 @@
 #include "../src/cuts.C"
 #include "../src/physics.C"
 #include "../src/parse_config.C"
+#include "../include/DBparse.h"
+
+DBparse::DBInfo DBInfo;
+
+// Load database files
+void getDB(TString cfg){
+  
+  cout<<"Attempting to load DB File"<<endl;
+  cout<<"---------------------------------------------------------------"<<endl;
+
+   vector<DBparse::DBrequest> request = {
+     {"He3 Polarization","He3 target polarization", 1},
+  };
+
+  DBInfo.cfg = cfg;
+  DBInfo.var_req = request;
+
+  DB_load(DBInfo);
+
+  cout<<"---------------------------------------------------------------"<<endl;
+
+}
 
 //Main
 void data_parse(const char *setup_file_name){
@@ -135,7 +157,7 @@ void data_parse(const char *setup_file_name){
 
   //uncut output tree variables
 
-  //calculated variables
+  //calculated and CODA variables
   double dx_out, dy_out, xexp_out, yexp_out, W2_out, nu_out, tau_out, epsilon_out, pcorr_out, mott_out;
   Parse->Branch("dx", &dx_out, "dx/D");
   Parse->Branch("dy", &dy_out, "dy/D");
@@ -154,6 +176,16 @@ void data_parse(const char *setup_file_name){
   Parse->Branch("etheta", &etheta_out, "etheta/D");
   Parse->Branch("p_N", &p_N_out, "p_N/D");
   Parse->Branch("e.kine.Q2", &Q2_out, "e.kine.Q2/D");
+
+  double He3Pol_out, g_trigbits_out, g_evtime_out;
+  int helicity_out;
+  Parse->Branch("he3.pol", &He3Pol_out, he3.pol/D");
+  Parse->Branch("g.trigbits", &g_trigbits_out, g.trigbits/D");
+  Parse->Branch("g.evtime", &g_evtime_out, g.evtime/D");
+  Parse->Branch("helicity", &gelicity_out, "helicity/I");
+
+  TDatime datetime_out;
+  Parse->Branch("datetime", "TDatime", &datetime_out);
 
 
   //hcal variables
@@ -471,6 +503,16 @@ void data_parse(const char *setup_file_name){
   C->SetBranchAddress("e.kine.q_y", &e_kine_q_y);
   C->SetBranchAddress("e.kine.q_z", &e_kine_q_z);
 
+  //CODA event variables
+
+  double g_trigbits, g_evtime;
+
+  C->SetBranchStatus("g.trigbits",1);
+  C->SetBranchStatus("g.evtime",1);
+
+  C->SetBranchAddress("g.trigbits", &g_trigbits);
+  C->SetBranchAddress("g.evtime", &g_evtime);
+
   //global cut branches
   //already handled above
 
@@ -502,11 +544,28 @@ void data_parse(const char *setup_file_name){
 	//single loop global cut
 	currenttreenum = C->GetTreeNumber();
     	if( nevent == 1 || currenttreenum != treenum ){
-    	treenum = currenttreenum;
-    	GlobalCut->UpdateFormulaLeaves();
+    	  treenum = currenttreenum;
+    	  GlobalCut->UpdateFormulaLeaves();
+
+          auto* Run_Data = C->GetFile()->Get<THaRunBase>("Run_Data");
+          TDatime run_time = Run_Data->GetDate();
+          run_time.Set(run_time.GetYear(),run_time.GetMonth(),run_time.GetDay(),run_time.GetHour(),run_time.GetMinute(),0);
+          run_time_unix = run_time.Convert();
     	}
         //Is true if failed global cut
     	bool failglobal = cuts::failedGlobal(GlobalCut);
+
+        double time_interval = 4; //in ns -> shouldn't this be 2 for GEn?
+        int time_rel = g_evtime*time_interval*1e-9/60; // in min, rounded
+	TDatime time_abs(run_time_unix + time_rel * 60);
+
+	auto it = DBInfo.He3Pol.find(time_abs);
+	if(it == DBInfo.He3Pol.end())
+	  He3Pol_out = -1;
+	else
+	  He3Pol_out = it->second;
+
+	datetime_out = time_abs;
 
 	///////////
 	//Electron-arm physics calculations
@@ -787,6 +846,11 @@ void data_parse(const char *setup_file_name){
 
   passGlobal_out = (int) !failglobal;
 	HCalON_out = (int) hcalaa_ON;
+
+  g_evtime_out = g_evtime;
+  g_trigbits_out = g_trigbits;
+
+  //date time???
 
   run_out = run ;
   mag_out = field;
