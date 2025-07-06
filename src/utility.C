@@ -626,4 +626,12 @@ namespace utility{
   return daCanvas;
   }
 
+  TDatime SetTime(string time_str){
+
+    TDatime time(time_str.c_str());
+    time.Set(time.GetYear(),time.GetMonth(),time.GetDay(),time.GetHour(),time.GetMinute(),0);
+      
+    return time;
+  }
+
 } //end namespace
