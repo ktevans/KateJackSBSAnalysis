@@ -3,6 +3,9 @@
 //05/29/2025
 //Purpose: Parsing Script for GEn-II data to produce output histograms for later analysis
 
+//root
+//.x data_parse.C("../config/setup_Yields_GEN2_He3.cfg")
+
 //The exact ordering of this matters. ROOT for some reason cannot handle calls for files that have already been included.
 #include "TF1.h"
 #include "TChain.h"
