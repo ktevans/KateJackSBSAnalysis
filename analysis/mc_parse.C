@@ -82,13 +82,13 @@ int hcalnclusmin = mainConfig.get_HCalNclusMin();
 double hcal_offset = exp_constants::getHCalOffset(pass);
 
 //config info for efficiency map
-bool HCal_Eff_map_flag = mainConfig.get_HCalEffMap();
-double HCal_accep_avg_eff = mainConfig.get_HCalAccepAvgEff();
-TString HCal_Eff_map_file = mainConfig.get_HCalEffMapFile();
+//bool HCal_Eff_map_flag = mainConfig.get_HCalEffMap();
+//double HCal_accep_avg_eff = mainConfig.get_HCalAccepAvgEff();
+//TString HCal_Eff_map_file = mainConfig.get_HCalEffMapFile();
 
-double hcalfit_low = exp_constants::hcalposXi_mc; //lower fit/bin limit for hcal dx plots. 
-double hcalfit_high = exp_constants::hcalposXf_mc; //higher fit/bin limit for hcal dx plots.
-double hcal_fitrange = exp_constants::hcal_vrange; //Full range of hcal dx plots
+//double hcalfit_low = exp_constants::hcalposXi_mc; //lower fit/bin limit for hcal dx plots. 
+//double hcalfit_high = exp_constants::hcalposXf_mc; //higher fit/bin limit for hcal dx plots.
+//double hcal_fitrange = exp_constants::hcal_vrange; //Full range of hcal dx plots
 
 //store all important kinematic info in local variables
 kinematic_obj myKin(kinematic_file,kin);
@@ -106,7 +106,7 @@ vector<double> hcalpos = cuts::hcal_Position_MC();
 vector<double> hcalaa = cuts::hcal_ActiveArea_MC(1,1);
 
 //setup input file for the efficiency map
-TFile *eff_map_file = new TFile(HCal_Eff_map_file.Data());
+//TFile *eff_map_file = new TFile(HCal_Eff_map_file.Data());
 
 //setup output file
 TString outfile = utility::makeOutputFileName_MCParse(exp,kin,sbs_field,target); 
@@ -127,7 +127,7 @@ vector<pair<string,vector<float>>> metadata_p;
 //metadata neutron
 vector<pair<string,vector<float>>> metadata_n;
 
-//Need to allow the MC parser to handle both LD2 and LH2 for MC file handling
+//Need to allow the MC parser to handle LD2, He3, and LH2 for MC file handling
 
 if(target == "LD2" || target == "He3")
 {
@@ -191,222 +191,154 @@ double dx_pn = mainConfig.get_dxpn();
   TTree *Parse = new TTree("Parse","Analysis Tree");
 
   //uncut output tree variables
-  double dx_out;
-  double dy_out;
-  double xexp_out;
-  double yexp_out;
-  double xhcal_out;
-  double yhcal_out;
-  double W2_out;
-  double Q2_out;
-  double nu_out;
-  double tau_out;
-  double epsilon_out;
-  double pcorr_out;
-  double mott_out;
-  double ehcal_out;
-  double BBtot_e_out;
-  double BBsh_e_out;
-  double BBps_e_out;
-  double hcal_atime_out;
-  double BBsh_atime_out;
-  double BBps_atime_out;
-  double BBgem_nhits_out;
-  double BBgem_ngoodhits_out;
-  double BBgem_chi2ndf_out;
-  double BBtr_x_out;
-  double BBtr_y_out;
-  double BBtr_p_out;
-  double BBtr_vz_out;
-  double BB_E_over_p_out;
-  double BBtr_th_out;
-  double BBtr_ph_out;
-  double BBtr_r_x_out;
-  double BBtr_r_y_out;
-  double BBtr_r_th_out;
-  double BBtr_r_ph_out;
-  double coin_mean_out;
-  double coin_sigma_out;
-  double dyO_p_out;
-  double dyO_n_out;
-  double dysig_p_out;
-  double dysig_n_out;
-  double dysig_n_fac_out;
-  double dysig_p_fac_out;
-  double dxO_p_out;
-  double dxO_n_out;
-  double dxsig_p_out;
-  double dxsig_n_out;
-  double dxsig_n_fac_out;
-  double dxsig_p_fac_out;
-  double nsigx_fid_out;
-  double nsigy_fid_out;
-  double W2low_out;
-  double W2high_out;
-  double uncorr_mc_weight_out;
-  double corr_mc_weight_out;
-  double x_mctrue_n_out;
-  double y_mctrue_n_out;
-  double p_mctrue_n_out;
-  double q_mctrue_n_out;
-  double theta_mctrue_n_out;
-  double phi_mctrue_n_out;
-  double pcentral_mctrue_n_out;
-  double phi_N_exp_out;
-  double Q2_mctrue_n_out;
-  double nu_mctrue_n_out;
-  double theta_N_exp_out;
-  double p_Nhat_mctrue_n_out;
-  double p_N_mctrue_n_out;
-  double W2_mctrue_n_out;
-  double p_Nhat_out;
-  double tau_mctrue_n_out;
-  double epsilon_mctrue_n_out;
-  double hcal_intersect_out;
-  double hcal_intersect_mctrue_n_out;
-  double dx_mctrue_n_out;
-  double dy_mctrue_n_out;
 
-  int num_hcal_clusid_out;
-  int nclus_hcal_out;
-  int hcal_clus_blk_out;
-  int BBtr_n_out;
-  int passGlobal_out;
-  int HCalON_out;
-  int passW2_out;
-  int passCoin_out;
-  int passFid_out;
-  int file_out;
-  int mag_out;
-  int BBsh_nclus_out;
-  int BBsh_nblk_out;
-  int BBps_nclus_out;
-  int BBps_nblk_out;
-  int is_proton_out;
-  int is_neutron_out;
-
-  double hcal_sh_atime_diff_out;
-  double proton_deflection_out;
-  double p_N_out;
-  double p_central_out;
-  double rowblkHCAL_out;
-  double colblkHCAL_out;
-  double nblkHCAL_out;
-  double MC_p_n_out;
-  double MC_p_e_out;
-  double MC_vz_out;
-  double ehcal_tree_out;
-
-  double corr_fac_out;
-
-  //setup new output tree branches
+  //calculated and CODA variables
+  double dx_out, dy_out, xexp_out, yexp_out, W2_out, Q2_out, nu_out, tau_out, epsilon_out, pcorr_out, mott_out;
   Parse->Branch("dx", &dx_out, "dx/D");
   Parse->Branch("dy", &dy_out, "dy/D");
-  Parse->Branch("xexp", &xexp_out, "xexp/D");
-  Parse->Branch("yexp", &yexp_out, "yexp/D");
-  Parse->Branch("xhcal", &xhcal_out, "xhcal/D");
-  Parse->Branch("yhcal", &yhcal_out, "yhcal/D");
-  Parse->Branch("W2", &W2_out, "W2/D");
-  Parse->Branch("Q2", &Q2_out, "Q2/D");
-  Parse->Branch("nu", &nu_out, "nu/D");
-  Parse->Branch("tau", &tau_out, "tau/D");
-  Parse->Branch("epsilon", &epsilon_out, "epsilon/D");
+  Parse->Branch("sbs.hcal.x_exp", &xexp_out, "sbs.hcal.x_exp/D");
+  Parse->Branch("sbs.hcal.y_exp", &yexp_out, "sbs.hcal.y_exp/D");
+  Parse->Branch("e.kine.W2", &W2_out, "e.kine.W2/D");
+  Parse->Branch("e.kine.Q2", &Q2_out, "e.kine.Q2/D")
+  Parse->Branch("e.kine.nu", &nu_out, "e.kine.nu/D");
+  Parse->Branch("e.kine.tau", &tau_out, "e.kine.tau/D");
+  Parse->Branch("e.kine.epsilon", &epsilon_out, "e.kine.epsilon/D");
   Parse->Branch("pcorr", &pcorr_out, "pcorr/D");
-  Parse->Branch("mott", &mott_out, "mott/D");
-  Parse->Branch("ehcal", &ehcal_out, "ehcal/D");
-  Parse->Branch("ehcal_tree", &ehcal_tree_out, "ehcal_tree/D");
-  Parse->Branch("BBtot_e", &BBtot_e_out, "BBtot_e/D");
-  Parse->Branch("BBsh_e", &BBsh_e_out, "BBsh_e/D");
-  Parse->Branch("BBsh_nclus", &BBsh_nclus_out, "BBsh_nclus/I");
-  Parse->Branch("BBsh_nblk", &BBsh_nblk_out, "BBsh_nblk/I");
-  Parse->Branch("BBps_e", &BBps_e_out, "BBps_e/D");
-  Parse->Branch("BBps_nclus", &BBps_nclus_out, "BBps_nclus/I");
-  Parse->Branch("BBps_nblk", &BBps_nblk_out, "BBps_nblk/I");
-  Parse->Branch("hcal_atime", &hcal_atime_out, "hcal_atime/D");
-  Parse->Branch("BBsh_atime", &BBsh_atime_out, "BBsh_atime/D");
-  Parse->Branch("BBps_atime", &BBps_atime_out, "BBps_atime/D");
-  Parse->Branch("BBgem_nhits", &BBgem_nhits_out, "BBgem_nhits/D");
-  Parse->Branch("BBgem_ngoodhits", &BBgem_ngoodhits_out, "BBgem_ngoodhits/D");
-  Parse->Branch("BBgem_chi2ndf", &BBgem_chi2ndf_out, "BBgem_chi2ndf/D");
-  Parse->Branch("BBtr_x", &BBtr_x_out, "BBtr_x/D");
-  Parse->Branch("BBtr_y", &BBtr_y_out, "BBtr_y/D");
-  Parse->Branch("BBtr_p", &BBtr_p_out, "BBtr_p/D");
-  Parse->Branch("BBtr_vz", &BBtr_vz_out, "BBtr_vz/D");
-  Parse->Branch("BB_E_over_p", &BB_E_over_p_out, "BB_E_over_p/D");
-  Parse->Branch("BBtr_th", &BBtr_th_out, "BBtr_th/D");
-  Parse->Branch("BBtr_ph", &BBtr_ph_out, "BBtr_ph/D");
-  Parse->Branch("BBtr_r_x", &BBtr_r_x_out, "BBtr_r_x/D");
-  Parse->Branch("BBtr_r_y", &BBtr_r_y_out, "BBtr_r_y/D");
-  Parse->Branch("BBtr_r_th", &BBtr_r_th_out, "BBtr_r_th/D");
-  Parse->Branch("BBtr_r_ph", &BBtr_r_ph_out, "BBtr_r_ph/D");
-  Parse->Branch("coin_mean", &coin_mean_out, "coin_mean/D");
-  Parse->Branch("coin_sigma", &coin_sigma_out, "coin_sigma/D");
-  Parse->Branch("dyO_p", &dyO_p_out, "dyO_p/D");
-  Parse->Branch("dyO_n", &dyO_n_out, "dyO_n/D");
-  Parse->Branch("dysig_p", &dysig_p_out, "dysig_p/D");
-  Parse->Branch("dysig_n", &dysig_n_out, "dysig_n/D");
-  Parse->Branch("dysig_n_fac", &dysig_n_fac_out, "dysig_n_fac/D");
-  Parse->Branch("dysig_p_fac", &dysig_p_fac_out, "dysig_p_fac/D");
-  Parse->Branch("dxO_p", &dxO_p_out, "dxO_p/D");
-  Parse->Branch("dxO_n", &dxO_n_out, "dxO_n/D");
-  Parse->Branch("dxsig_p", &dxsig_p_out, "dxsig_p/D");
-  Parse->Branch("dxsig_n", &dxsig_n_out, "dxsig_n/D");
-  Parse->Branch("dxsig_n_fac", &dxsig_n_fac_out, "dxsig_n_fac/D");
-  Parse->Branch("dxsig_p_fac", &dxsig_p_fac_out, "dxsig_p_fac/D");
-  Parse->Branch("nsigx_fid", &nsigx_fid_out , "nsigx_fid/D");
-  Parse->Branch("nsigy_fid", &nsigy_fid_out , "nsigy_fid/D");
-  Parse->Branch("W2low", &W2low_out, "W2low/D");
-  Parse->Branch("W2high", &W2high_out, "W2high/D");
-  Parse->Branch("Corr_MC_weight", &corr_mc_weight_out, "corr_MC_weight/D");
-  Parse->Branch("Uncorr_MC_weight", &uncorr_mc_weight_out, "uncorr_MC_weight/D");
-  Parse->Branch("hcal_sh_atime_diff", &hcal_sh_atime_diff_out, "hcal_sh_atime_diff/D");
+  Parse->Branch("e.kine.mott", &mott_out, "e.kine.mott/D");
+
+  //hcal variables
+  double sbs_hcal_x_out, sbs_hcal_y_out, sbs_hcal_e_out, sbs_hcal_atimeblk_out, sbs_hcal_clus_blk_row_out, sbs_hcal_clus_blk_col_out, sbs_hcal_nblk_out;
+  Parse->Branch("sbs.hcal.x", &sbs_hcal_x_out, "sbs.hcal.x/D");
+  Parse->Branch("sbs.hcal.y", &sbs_hcal_y_out, "sbs.hcal.y/D");
+  Parse->Branch("sbs.hcal.e", &sbs_hcal_e_out, "sbs.hcal.e/D");
+  Parse->Branch("sbs.hcal.atimeblk", &sbs_hcal_atimeblk_out, "sbs.hcal.atimeblk/D");
+  Parse->Branch("sbs.hcal.nblk", &sbs_hcal_nblk_out, "sbs.hcal.nblk/D");
+  Parse->Branch("sbs.hcal.clus_blk.row",&sbs_hcal_clus_blk_row_out, "sbs.hcal.clus_blk.row/D");
+  Parse->Branch("sbs.hcal.clus_blk.col", &sbs_hcal_clus_blk_col_out, "sbs.hcal.clus_blk.col/D");
+
+  int Ndata_sbs_hcal_clus_id_out, sbs_hcal_nclus_out, sbs_hcal_clus_blk_id_out;
+  Parse->Branch("Ndata.sbs.hcal.clus.id", &Ndata_sbs_hcal_clus_id_out, "Ndata.sbs.hcal.clus.id/I");
+  Parse->Branch("sbs.hcal.clus_blk.id", &sbs_hcal_clus_blk_id_out, "sbs.hcal.clus_blk.id/I");
+  Parse->Branch("sbs.hcal.nclus", &sbs_hcal_nclus_out,"sbs.hcal.nclus/I");
+
+  //bbcal variables
+  double BBtot_e_out, bb_sh_e_out, bb_ps_e_out, bb_sh_atimeblk_out, bb_ps_atimeblk_out;
+  Parse->Branch("bb.tot.e", &BBtot_e_out, "bb.tot.e/D");
+  Parse->Branch("bb.sh.e", &bb_sh_e_out, "bb.sh.e/D");
+  Parse->Branch("bb.ps.e", &bb_ps_e_out, "bb.ps.e/D");
+  Parse->Branch("bb.sh.atimeblk", &bb_sh_atimeblk_out, "bb.sh.atimeblk/D");
+  Parse->Branch("bb.ps.atimeblk", &bb_ps_atimeblk_out, "bb.ps.atimeblk/D");
+
+  int bb_sh_nclus_out, bb_sh_nblk_out, bb_ps_nclus_out, bb_ps_nblk_out;
+  Parse->Branch("bb.sh.nclus", &bb_sh_nclus_out, "bb.sh.nclus/I");
+  Parse->Branch("bb.sh.nblk", &bb_sh_nblk_out, "bb.sh.nblk/I");
+  Parse->Branch("bb.ps.nclus", &bb_ps_nclus_out, "bb.ps.nclus/I");
+  Parse->Branch("bb.ps.nblk", &bb_ps_nblk_out, "bb.ps.nblk/I");
+
+  //grinch variables
+  double bb_grinch_tdc_clus_trackindex_out, bb_grinch_tdc_clus_size_out, bb_grinch_tdc_hit_time_out[maxtracks], bb_grinch_tdc_hit_pmtnum_out[maxtracks], bb_grinch_tdc_hit_amp_out[maxtracks];
+  Parse->Branch("bb.grinch_tdc.clus.trackindex",&bb_grinch_tdc_clus_trackindex_out,"bb.grinch_tdc.clus.trackindex/D");
+  Parse->Branch("bb.grinch_tdc.clus.size",&bb_grinch_tdc_clus_size_out,"bb.grinch_tdc.clus.size/D");
+  Parse->Branch("bb.grinch_tdc.hit.time",&bb_grinch_tdc_hit_time_out,"bb.grinch_tdc.hit.time/D");
+  Parse->Branch("bb.grinch_tdc.hit.pmtnum",&bb_grinch_tdc_hit_pmtnum_out,"bb.grinch_tdc.hit.pmtnum/D");
+  Parse->Branch("bb.grinch_tdc.hit.amp",&bb_grinch_tdc_hit_amp_out,"bb.grinch_tdc.hit.amp/D");
+  int Ndata_bb_grinch_tdc_hit_time_out;
+  Parse->Branch("Ndata.bb.grinch_tdc.hit.time",&Ndata_bb_grinch_tdc_hit_time_out,"Ndata.bb.grinch_tdc.hit.time/I");
+
+  //gem variables
+  double bb_gem_track_nhits_out, bb_gem_track_ngoodhits_out, bb_gem_track_chi2ndf_out;
+  Parse->Branch("bb.gem.track.nhits", &bb_gem_track_nhits_out, "bb.gem.track.nhits/D");
+  Parse->Branch("bb.gem.track.ngoodhits", &bb_gem_track_ngoodhits_out, "bb.gem.track.ngoodhits/D");
+  Parse->Branch("bb.gem.track.chi2ndf", &bb_gem_track_chi2ndf_out, "bb.gem.track.chi2ndf/D");  
+  
+  //tracking variables
+  double bb_tr_x_out, bb_tr_y_out, bb_tr_p_out, bb_tr_vz_out, bb_tr_th_out, bb_tr_ph_out, bb_tr_r_x_out, bb_tr_r_y_out, bb_tr_r_th_out, bb_tr_r_ph_out;
+  Parse->Branch("bb.tr.x", &bb_tr_x_out, "bb.tr.x/D");
+  Parse->Branch("bb.tr.y", &bb_tr_y_out, "bb.tr.y/D");
+  Parse->Branch("bb.tr.p", &bb_tr_p_out, "bb.tr.p/D");
+  Parse->Branch("bb.tr.vz", &bb_tr_vz_out, "bb.tr.vz/D");
+  Parse->Branch("bb.tr.th", &bb_tr_th_out, "bb.tr.th/D");
+  Parse->Branch("bb.tr.ph", &bb_tr_ph_out, "bb.tr.ph/D");
+  Parse->Branch("bb.tr.r_x", &bb_tr_r_x_out, "bb.tr.r_x/D");
+  Parse->Branch("bb.tr.r_y", &bb_tr_r_y_out, "bb.tr.r_y/D");
+  Parse->Branch("bb.tr.r_th", &bb_tr_r_th_out, "bb.tr.r_th/D");
+  Parse->Branch("bb.tr.r_ph", &bb_tr_r_ph_out, "bb.tr.r_ph/D");
+
+  int bb_tr_n_out;
+  Parse->Branch("bb.tr.n", &bb_tr_n_out, "bb.tr.n/I");
+
+  double BB_E_over_p_out;
+  Parse->Branch("bb.e_over_p", &BB_E_over_p_out, "bb.e_over_p/D");
+  
+  double coin_mean_out;
+  double coin_sigma_out;
+
+  //kinematic variables
+  int file_out, mag_out;
+  Parse->Branch("filenum", &file_out, "filenum/I");
+  Parse->Branch("sbs.field", &mag_out, "sbs.field/I");
+
+  double proton_deflection_out, p_N_out, p_central_out, MC_p_n_out, MC_p_e_out, MC_vz_out;
   Parse->Branch("proton_deflection", &proton_deflection_out, "proton_deflection/D");
   Parse->Branch("p_N", &p_N_out, "p_N/D");
   Parse->Branch("p_central", &p_central_out, "p_centrial/D");
+  Parse->Branch("MC_p_n", &MC_p_n_out, "MC_p_n/D");
+  Parse->Branch("MC_p_e", &MC_p_e_out, "MC_p_e/D");
+  Parse->Branch("MC_vz", &MC_vz_out, "MC_vz/D");
 
-  Parse->Branch("num_hcal_clusid", &num_hcal_clusid_out, "num_hcal_clusid/I");
-  Parse->Branch("hcal_clus_blk", &hcal_clus_blk_out, "hcal_clus_blk/I");
-  Parse->Branch("nclus_hcal", &nclus_hcal_out,"nclus_hcal/I");
-  Parse->Branch("BBtr_n", &BBtr_n_out, "BBtr_n/I");
+  //cut variables
+  int passGlobal_out, HCalON_out;
   Parse->Branch("passGlobal", &passGlobal_out,"passGlobal/I");
   Parse->Branch("HCalON", &HCalON_out,"HCalON/I");
-  Parse->Branch("passW2", &passW2_out,"passW2/I");
-  Parse->Branch("passCoin", &passCoin_out,"passCoin/I");
-  Parse->Branch("passFid", &passFid_out, "passFid/I");
-  Parse->Branch("file", &file_out, "file/I");
-  Parse->Branch("mag", &mag_out, "mag/I");  
-  Parse->Branch("is_proton", &is_proton_out, "is_proton/I");
-  Parse->Branch("is_neutron", &is_neutron_out, "is_neutron/I");
 
-  Parse->Branch( "nblkHCAL", &nblkHCAL_out, "nblkHCAL/D" );
-  Parse->Branch( "rowblkHCAL",&rowblkHCAL_out, "rowblkHCAL/D" );
-  Parse->Branch( "colblkHCAL", &colblkHCAL_out, "colblkHCAL/D" );
-  Parse->Branch( "MC_p_n", &MC_p_n_out, "MC_p_n/D");
-  Parse->Branch( "MC_p_e", &MC_p_e_out, "MC_p_e/D");
-  Parse->Branch( "MC_vz", &MC_vz_out, "MC_vz/D");
-
-  Parse->Branch("x_mctrue_n", &x_mctrue_n_out, "x_mctrue_n/D");
-  Parse->Branch("y_mctrue_n", &y_mctrue_n_out, "y_mctrue_n/D");
-  Parse->Branch("p_mctrue_n", &p_mctrue_n_out, "p_mctrue_n/D");
-  Parse->Branch("q_mctrue_n", &q_mctrue_n_out, "q_mctrue_n/D");
-  Parse->Branch("theta_mctrue_n", &theta_mctrue_n_out, "theta_mctrue_n/D");
-  Parse->Branch("phi_mctrue_n", &phi_mctrue_n_out, "phi_mctrue_n/D");
-  Parse->Branch("pcentral_mctrue_n", &pcentral_mctrue_n_out, "pcentral_mctrue_n/D");
-  Parse->Branch("phi_N_exp", &phi_N_exp_out, "phi_N_exp/D");
-  Parse->Branch("Q2_mctrue_n", &Q2_mctrue_n_out, "Q2_mctrue_n/D");
-  Parse->Branch("nu_mctrue_n", &nu_mctrue_n_out, "nu_mctrue_n/D");
-  Parse->Branch("theta_N_exp", &theta_N_exp_out, "theta_N_exp/D");
-  Parse->Branch("p_Nhat_mctrue_n", &p_Nhat_mctrue_n_out, "p_Nhat_mctrue_n/D");
-  Parse->Branch("p_N_mctrue_n", &p_N_mctrue_n_out, "p_N_mctrue_n/D");
-  Parse->Branch("W2_mctrue_n", &W2_mctrue_n_out, "W2_mctrue_n/D");
-  Parse->Branch("p_Nhat", &p_Nhat_out, "p_Nhat/D");
-  Parse->Branch("tau_mctrue_n", &tau_mctrue_n_out, "tau_mctrue_n/D");
-  Parse->Branch("epsilon_mctrue_n", &epsilon_mctrue_n_out, "epsilon_mctrue_n/D");
-  Parse->Branch("hcal_intersect", &hcal_intersect_out, "hcal_intersect/D");
-  Parse->Branch("hcal_intersect_mctrue_n", &hcal_intersect_mctrue_n_out, "hcal_intersect_mctrue_n/D");
-  Parse->Branch("dx_mctrue_n", &dx_mctrue_n_out, "dx_mctrue_n/D");
-  Parse->Branch("dy_mctrue_n", &dy_mctrue_n_out, "dy_mctrue_n/D");
-  Parse->Branch("corr_fac", &corr_fac_out, "corr_fac/D");
+  double hcal_sh_atime_diff_out;
+  Parse->Branch("adc.coin", &hcal_sh_atime_diff_out, "adc.coin/D");
+  
+  //double dyO_p_out;
+  //double dyO_n_out;
+  //double dysig_p_out;
+  //double dysig_n_out;
+  //double dysig_n_fac_out;
+  //double dysig_p_fac_out;
+  //double dxO_p_out;
+  //double dxO_n_out;
+  //double dxsig_p_out;
+  //double dxsig_n_out;
+  //double dxsig_n_fac_out;
+  //double dxsig_p_fac_out;
+  //double nsigx_fid_out;
+  //double nsigy_fid_out;
+  //double W2low_out;
+  //double W2high_out;
+  //double uncorr_mc_weight_out;
+  //double corr_mc_weight_out;
+  //double x_mctrue_n_out;
+  //double y_mctrue_n_out;
+  //double p_mctrue_n_out;
+  //double q_mctrue_n_out;
+  //double theta_mctrue_n_out;
+  //double phi_mctrue_n_out;
+  //double pcentral_mctrue_n_out;
+  //double phi_N_exp_out;
+  //double Q2_mctrue_n_out;
+  //double nu_mctrue_n_out;
+  //double theta_N_exp_out;
+  //double p_Nhat_mctrue_n_out;
+  //double p_N_mctrue_n_out;
+  //double W2_mctrue_n_out;
+  //double p_Nhat_out;
+  //double tau_mctrue_n_out;
+  //double epsilon_mctrue_n_out;
+  //double hcal_intersect_out;
+  //double hcal_intersect_mctrue_n_out;
+  //double dx_mctrue_n_out;
+  //double dy_mctrue_n_out;
+  //int passW2_out;
+  //int passCoin_out;
+  //int passFid_out;
+  //int is_proton_out;
+  //int is_neutron_out;
+  //double corr_fac_out;
 
   //logistical information
   TString nuc = "none"; 
