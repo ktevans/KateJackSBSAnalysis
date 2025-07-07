@@ -277,51 +277,6 @@ void data_parse(const char *setup_file_name){
   double hcal_sh_atime_diff_out;
   Parse->Branch("adc.coin", &hcal_sh_atime_diff_out, "adc.coin/D");
 
-
-  //double coin_mean_out;
-  //double coin_sigma_out;
-  //double dyO_p_out;
-  //double dyO_n_out;
-  //double dysig_p_out;
-  //double dysig_n_out;
-  //double dysig_n_fac_out;
-  //double dysig_p_fac_out;
-  //double dxO_p_out;
-  //double dxO_n_out;
-  //double dxsig_p_out;
-  //double dxsig_n_out;
-  //double dxsig_n_fac_out;
-  //double dxsig_p_fac_out;
-  //double nsigx_fid_out;
-  //double nsigy_fid_out;
-  //double W2low_out;
-  //double W2high_out;
-  //int passW2_out;
-  //int passCoin_out;
-  //int passFid_out;
-  //setup new output tree branches
-  //Parse->Branch("coin_mean", &coin_mean_out, "coin_mean/D");
-  //Parse->Branch("coin_sigma", &coin_sigma_out, "coin_sigma/D");
-  //Parse->Branch("dyO_p", &dyO_p_out, "dyO_p/D");
-  //Parse->Branch("dyO_n", &dyO_n_out, "dyO_n/D");
-  //Parse->Branch("dysig_p", &dysig_p_out, "dysig_p/D");
-  //Parse->Branch("dysig_n", &dysig_n_out, "dysig_n/D");
-  //Parse->Branch("dysig_n_fac", &dysig_n_fac_out, "dysig_n_fac/D");
-  //Parse->Branch("dysig_p_fac", &dysig_p_fac_out, "dysig_p_fac/D");
-  //Parse->Branch("dxO_p", &dxO_p_out, "dxO_p/D");
-  //Parse->Branch("dxO_n", &dxO_n_out, "dxO_n/D");
-  //Parse->Branch("dxsig_p", &dxsig_p_out, "dxsig_p/D");
-  //Parse->Branch("dxsig_n", &dxsig_n_out, "dxsig_n/D");
-  //Parse->Branch("dxsig_n_fac", &dxsig_n_fac_out, "dxsig_n_fac/D");
-  //Parse->Branch("dxsig_p_fac", &dxsig_p_fac_out, "dxsig_p_fac/D");
-  //Parse->Branch("nsigx_fid", &nsigx_fid_out , "nsigx_fid/D");
-  //Parse->Branch("nsigy_fid", &nsigy_fid_out , "nsigy_fid/D");
-  //Parse->Branch("W2low", &W2low_out, "W2low/D");
-  //Parse->Branch("W2high", &W2high_out, "W2high/D");
-  //Parse->Branch("passW2", &passW2_out,"passW2/I");
-  //Parse->Branch("passCoin", &passCoin_out,"passCoin/I");
-  //Parse->Branch("passFid", &passFid_out, "passFid/I");
-
   //loop over the run numbers
   for(int j = 0; j<num_runs; j++){
 
@@ -509,13 +464,15 @@ void data_parse(const char *setup_file_name){
 
   //CODA event variables
 
-  double g_trigbits, g_evtime;
+  double g_trigbits, g_evtime, scalhel_hel;
 
   C->SetBranchStatus("g.trigbits",1);
   C->SetBranchStatus("g.evtime",1);
+  C->SetBranchStatus("scalhel.hel",1);
 
   C->SetBranchAddress("g.trigbits", &g_trigbits);
   C->SetBranchAddress("g.evtime", &g_evtime);
+  C->SetBranchAddress("scalhel.hel", &scalhel_hel);
 
   //global cut branches
   //already handled above
@@ -724,39 +681,10 @@ void data_parse(const char *setup_file_name){
 	double BdL = physics::getBdL(sbs_field,kin,pass);
 	double proton_deflection = physics::get_protonDeflection(BdL,p_N.Vect().Mag(),hcaldist,sbsdist);
 
-	//////////////////////
-	//INTIME CLUSTER ANALYSIS
-	//Requires that it has the greatest hcal cluster energy and that hcal cluster analog time is in coincidence with bbcal analog time
+  	double dx = physics::get_dx(sbs_hcal_x,xhcal_expect);
+  	double dy = physics::get_dx(sbs_hcal_y,yhcal_expect);
 
-	//intime cluster selection analysis, intime algorithm
-	//int intime_idx = physics::cluster_intime_select(Ndata_sbs_hcal_clus_id,sbs_hcal_clus_adctime,bb_sh_atimeblk,sbs_hcal_clus_e,coin_mean,coin_sig_fac,coin_profile_sig,hcalemin);
-
-	//Assume that the itime analysis is sufficient to find the best cluster in HCal
-	//int clus_idx_best = intime_idx;
-
-	//calculate important information from best cluster
-  // HCAL FIRST CLUSTER IS ALREADY "BEST" CLUSTER, NO NEED TO DEFINE IT
-	//double xhcal_bestclus = sbs_hcal_clus_x[clus_idx_best];
- 	//double yhcal_bestclus = sbs_hcal_clus_y[clus_idx_best];
-	//double xhcal_pclus = sbs_hcal_clus_x[0];
-  //double yhcal_pclus = sbs_hcal_clus_y[0];
-	//double dx_bestclus = physics::get_dx(xhcal_bestclus,xhcal_expect);
-	//double dx_pclus = physics::get_dx(xhcal_pclus,xhcal_expect);
- 	//double dy_bestclus = physics::get_dy(yhcal_bestclus,yhcal_expect);
-
-  double dx = physics::get_dx(sbs_hcal_x,xhcal_expect);
-  double dy = physics::get_dx(sbs_hcal_y,yhcal_expect);
-
-	//double hcal_atime_bestclus = sbs_hcal_clus_adctime[clus_idx_best];
 	double coin = sbs_hcal_atimeblk - bb_sh_atimeblk;
-	//double coin_pclus = sbs_hcal_clus_adctime[0] - bb_sh_atimeblk;
-	//double hcal_e_bestclus = sbs_hcal_clus_e[clus_idx_best];
-	//int hcal_nblk_bestclus = (int) sbs_hcal_clus_nblk[clus_idx_best];
-
-	//calculate the number of sigma away from fiducial boundaries. Store info for later
-        //double nsigx_fid = cuts::calculate_nsigma_fid_x(xhcal_expect,dxsig_p,dxsig_n,dx_pn,hcalaa);
-        //double nsigy_fid = cuts::calculate_nsigma_fid_y(yhcal_expect,dysig_p,hcalaa);
-
 
 	//setup booleans for cuts later. Save boolean values to tree
 	//global is above
@@ -771,65 +699,43 @@ void data_parse(const char *setup_file_name){
 	bool antiW2_high = W2 > W2_high;
 	bool antiW2_morehigh = W2 > (W2_high+1.1);
 
-	//good dy boolean
-	//bool good_dy = cuts::good_dy(dy_bestclus,dyO_p,dysig_cut_fac,dysig_cut);
-
-	//good coincidence time cut
-	//bool passCoin = cuts::passCoin(coin_bestclus,coin_mean,coin_sig_fac,coin_sig);
-	//Used for coin anti cut
-	//bool passCoin_pclus = cuts::passCoin(coin_pclus,coin_mean,coin_sig_fac,coin_sig);
-
-	//good fiducial cut
-	//bool passFid = cuts::hcalfid_IN(xhcal_expect,yhcal_expect,dx_pn,hcalfid);
-
-	//pass HCal E
-	//bool passHCalE = cuts::passHCalE(hcal_e_bestclus,hcalemin);
-
-	//pass HCal num clus
-	//bool passHCal_Nclus = cuts::passHCal_NClus(sbs_hcal_nclus,hcalnclusmin);
-
-	//pass NSig Fid check
-	//bool passNSigFid = cuts::passNsigFid(nsigx_fid,nsigy_fid);
-
 	//Fill analysis tree variables before making cuts
-	//dx_out = dx_bestclus;
-  dx_out = dx;
- 	//dy_out = dy_bestclus;
-  dy_out = dy;
-  xexp_out = xhcal_expect;
-  yexp_out = yhcal_expect;
-  sbs_hcal_x_out = sbs_hcal_x;
+  	dx_out = dx;
+ 	dy_out = dy;
+  	xexp_out = xhcal_expect;
+ 	yexp_out = yhcal_expect;
+  	sbs_hcal_x_out = sbs_hcal_x;
  	sbs_hcal_y_out = sbs_hcal_y;
-  W2_out = W2;
-  nu_out = nu;
+ 	W2_out = W2;
+  	nu_out = nu;
 	tau_out = tau;
 	epsilon_out = epsilon;
 	pcorr_out = pcorr;
 	mott_out = Mott_CS;
 
-  sbs_hcal_e_out = sbs_hcal_e;
+ 	 sbs_hcal_e_out = sbs_hcal_e;
 
-  BBtot_e_out = bb_sh_e+bb_ps_e;
-  bb_sh_e_out = bb_sh_e;
-  bb_ps_e_out = bb_ps_e;
+  	BBtot_e_out = bb_sh_e+bb_ps_e;
+  	bb_sh_e_out = bb_sh_e;
+  	bb_ps_e_out = bb_ps_e;
 
-  sbs_hcal_atimeblk_out = sbs_hcal_atimeblk;
+  	sbs_hcal_atimeblk_out = sbs_hcal_atimeblk;
 
-  bb_sh_atimeblk_out = bb_sh_atimeblk;
-  bb_ps_atimeblk_out = bb_ps_atimeblk;
+  	bb_sh_atimeblk_out = bb_sh_atimeblk;
+  	bb_ps_atimeblk_out = bb_ps_atimeblk;
 
-  bb_gem_track_nhits_out = bb_gem_track_nhits[0];
-  bb_gem_track_ngoodhits_out = bb_gem_track_ngoodhits[0];
+  	bb_gem_track_nhits_out = bb_gem_track_nhits[0];
+  	bb_gem_track_ngoodhits_out = bb_gem_track_ngoodhits[0];
 	bb_gem_track_chi2ndf_out = bb_gem_track_chi2ndf[0];
 
-  bb_tr_x_out = bb_tr_x[0];
-  bb_tr_y_out = bb_tr_y[0];
-  bb_tr_p_out = bb_tr_p[0];
-  bb_tr_vz_out = bb_tr_vz[0];
+  	bb_tr_x_out = bb_tr_x[0];
+  	bb_tr_y_out = bb_tr_y[0];
+  	bb_tr_p_out = bb_tr_p[0];
+  	bb_tr_vz_out = bb_tr_vz[0];
 
-  BB_E_over_p_out = BB_E_over_p;
+  	BB_E_over_p_out = BB_E_over_p;
 
-  bb_tr_th_out = bb_tr_th[0];
+  	bb_tr_th_out = bb_tr_th[0];
 	bb_tr_ph_out = bb_tr_ph[0];
 	bb_tr_r_x_out = bb_tr_r_x[0];
 	bb_tr_r_y_out = bb_tr_r_y[0];
@@ -837,45 +743,42 @@ void data_parse(const char *setup_file_name){
 	bb_tr_r_ph_out = bb_tr_r_ph[0];
 
 	Ndata_sbs_hcal_clus_id_out = Ndata_sbs_hcal_clus_id ;
-  sbs_hcal_nclus_out = sbs_hcal_nclus;
+  	sbs_hcal_nclus_out = sbs_hcal_nclus;
 
-  Ndata_bb_grinch_tdc_hit_time_out = Ndata_bb_grinch_tdc_hit_time;
-  bb_grinch_tdc_clus_size_out = bb_grinch_tdc_clus_size;
-  bb_grinch_tdc_clus_trackindex_out = bb_grinch_tdc_clus_trackindex;
-  for(int iclus = 0; iclus < Ndata_bb_grinch_tdc_hit_time; iclus++)
-  {
-    bb_grinch_tdc_hit_time_out[iclus] = bb_grinch_tdc_hit_time[iclus];
-    bb_grinch_tdc_hit_pmtnum_out[iclus] = bb_grinch_tdc_hit_pmtnum[iclus];
-    bb_grinch_tdc_hit_amp_out[iclus] = bb_grinch_tdc_hit_amp[iclus];
-  }
+  	Ndata_bb_grinch_tdc_hit_time_out = Ndata_bb_grinch_tdc_hit_time;
+  	bb_grinch_tdc_clus_size_out = bb_grinch_tdc_clus_size;
+  	bb_grinch_tdc_clus_trackindex_out = bb_grinch_tdc_clus_trackindex;
+  	for(int iclus = 0; iclus < Ndata_bb_grinch_tdc_hit_time; iclus++)
+  	{
+    	  bb_grinch_tdc_hit_time_out[iclus] = bb_grinch_tdc_hit_time[iclus];
+    	  bb_grinch_tdc_hit_pmtnum_out[iclus] = bb_grinch_tdc_hit_pmtnum[iclus];
+      	  bb_grinch_tdc_hit_amp_out[iclus] = bb_grinch_tdc_hit_amp[iclus];
+  	}
 
-  bb_sh_nclus_out = (int) bb_sh_nclus;
+  	bb_sh_nclus_out = (int) bb_sh_nclus;
 	bb_sh_nblk_out = (int) bb_sh_nblk;
 	bb_ps_nclus_out = (int) bb_ps_nclus;
-  bb_ps_nblk_out = (int) bb_ps_nblk;
+  	bb_ps_nblk_out = (int) bb_ps_nblk;
 	bb_tr_n_out = bb_tr_n;
 
-  passGlobal_out = (int) !failglobal;
+  	passGlobal_out = (int) !failglobal;
 	HCalON_out = (int) hcalaa_ON;
 
-  g_evtime_out = g_evtime;
-  g_trigbits_out = g_trigbits;
+  	g_evtime_out = g_evtime;
+  	g_trigbits_out = g_trigbits;
+  	helicity_out = scalhel_hel;
 
-  //date time???
+  	run_out = run ;
+  	mag_out = field;
 
-  run_out = run ;
-  mag_out = field;
-
-  hcal_sh_atime_diff_out = coin;
+  	hcal_sh_atime_diff_out = coin;
 	proton_deflection_out = proton_deflection;
 	p_central_out = pcentral;
 
-  sbs_hcal_nblk_out = sbs_hcal_nblk;
-	//sbs_hcal_clus_blk_row_out = sbs_hcal_clus_blk_row[clus_idx_best];
-  sbs_hcal_clus_blk_row_out = sbs_hcal_clus_blk_row[0];
-	//sbs_hcal_clus_blk_col_out = sbs_hcal_clus_blk_col[clus_idx_best];
-  sbs_hcal_clus_blk_col_out = sbs_hcal_clus_blk_col[0];
-  sbs_hcal_clus_blk_id_out = (int) sbs_hcal_clus_blk_id[0];
+  	sbs_hcal_nblk_out = sbs_hcal_nblk;
+  	sbs_hcal_clus_blk_row_out = sbs_hcal_clus_blk_row[0];
+  	sbs_hcal_clus_blk_col_out = sbs_hcal_clus_blk_col[0];
+  	sbs_hcal_clus_blk_id_out = (int) sbs_hcal_clus_blk_id[0];
 
 	//For physics extraction
 	Ebeam_corr_out = Ecorr;
