@@ -12,7 +12,7 @@
 namespace utility{
 
   //hard-coded output directory
-  string out_dir_temp = "/work/halla/sbs/ktevans/KateJackSBSAnalysis/output";
+  string out_dir_temp = "/volatile/halla/sbs/ktevans/KateJackSBSAnalysis";
   TString output_directory = TString(out_dir_temp);
 
   //function to determine if what is found was a number or a string
