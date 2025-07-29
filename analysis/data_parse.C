@@ -716,7 +716,7 @@ void data_parse(const char *setup_file_name){
 	pcorr_out = pcorr;
 	mott_out = Mott_CS;
 
- 	 sbs_hcal_e_out = sbs_hcal_e;
+ 	sbs_hcal_e_out = sbs_hcal_e;
 
   	BBtot_e_out = bb_sh_e+bb_ps_e;
   	bb_sh_e_out = bb_sh_e;
