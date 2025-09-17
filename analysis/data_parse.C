@@ -184,11 +184,12 @@ void data_parse(const char *setup_file_name){
   Parse->Branch("p_N", &p_N_out, "p_N/D");
   Parse->Branch("e.kine.Q2", &Q2_out, "e.kine.Q2/D");
 
-  double He3Pol_out, g_trigbits_out, g_evtime_out;
+  double He3Pol_out, g_trigbits_out, g_evtime_out, IHWP_out;
   int helicity_out;
   Parse->Branch("he3pol", &He3Pol_out, "he3pol/D");
   Parse->Branch("g.trigbits", &g_trigbits_out, "g.trigbits/D");
   Parse->Branch("g.evtime", &g_evtime_out, "g.evtime/D");
+  Parse->Branch("IHWP", &IHWP_out, "IHWP/D");
   Parse->Branch("helicity", &helicity_out, "helicity/I");
 
   TDatime datetime_out;
@@ -467,14 +468,16 @@ void data_parse(const char *setup_file_name){
 
   //CODA event variables
 
-  double g_trigbits, g_evtime, scalhel_hel;
+  double g_trigbits, g_evtime, scalhel_hel, IHWP;
 
   C->SetBranchStatus("g.trigbits",1);
   C->SetBranchStatus("g.evtime",1);
+  C->SetBranchStatus("IGL1I00OD16_16",1);
   C->SetBranchStatus("scalhel.hel",1);
 
   C->SetBranchAddress("g.trigbits", &g_trigbits);
   C->SetBranchAddress("g.evtime", &g_evtime);
+  C->SetBranchAddress("IHWP", &IHWP);
   C->SetBranchAddress("scalhel.hel", &scalhel_hel);
 
   //global cut branches
@@ -770,6 +773,7 @@ void data_parse(const char *setup_file_name){
   	g_evtime_out = g_evtime;
   	g_trigbits_out = g_trigbits;
   	helicity_out = scalhel_hel;
+    IHWP_out = IHWP;
 
   	run_out = run ;
   	mag_out = field;
