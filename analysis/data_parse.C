@@ -477,7 +477,7 @@ void data_parse(const char *setup_file_name){
 
   C->SetBranchAddress("g.trigbits", &g_trigbits);
   C->SetBranchAddress("g.evtime", &g_evtime);
-  C->SetBranchAddress("IHWP", &IHWP);
+  C->SetBranchAddress("IGL1I00OD16_16", &IHWP);
   C->SetBranchAddress("scalhel.hel", &scalhel_hel);
 
   //global cut branches
