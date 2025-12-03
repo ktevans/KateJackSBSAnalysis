@@ -24,7 +24,7 @@ TString data_object::makeInputFileName(){
 	inputfile = Form("%s/%s/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,run);
       } // end if He3
       else if(target == "H2"){
-	inputfile = Form("%s/%s/%s/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,tar_char,run);
+	inputfile = Form("%s/%s/H2/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,run);
       } // end if H2
       else {
 	cout << "ERROR!! There is no target: " << target << ", dummy!" << endl;
