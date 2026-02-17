@@ -22,10 +22,10 @@ TString data_object::makeInputFileName(){
 
     if(kinematic == "GEN2"){
       if(target == "He3"){
-	inputfile = Form("%s/%s/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,run);
+	inputfile = Form("%s/He3/%s/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,run);
       } // end if He3
       else if(target == "H2"){
-	inputfile = Form("%s/%s/H2/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,run);
+	inputfile = Form("%s/H2/%s/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,run);
       } // end if H2
       else {
 	cout << "ERROR!! There is no target: " << target << ", dummy!" << endl;
@@ -34,10 +34,10 @@ TString data_object::makeInputFileName(){
 
     else if(kinematic == "GEN3"){
       if(target == "He3"){
-	inputfile = Form("%s/%s/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,run);
+	inputfile = Form("%s/He3/%s/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,run);
       } // end if He3
       else if(target == "H2"){
-	inputfile = Form("%s/%s/%s/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,tar_char,run);
+	inputfile = Form("%s/H2/%s/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,run);
       } // end if H2
       else {
 	cout << "ERROR!! There is no target: " << target << ", dummy!" << endl;
@@ -46,7 +46,7 @@ TString data_object::makeInputFileName(){
 
     else if(kinematic == "GEN4a"){
       if(target == "He3"){
-	inputfile = Form("%s/%s/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,run);
+	inputfile = Form("%s/He3/GEN4/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,run);
       } // end if He3
       else {
 	cout << "ERROR!! There is no target: " << target << ", dummy!" << endl;
@@ -55,7 +55,7 @@ TString data_object::makeInputFileName(){
 
     else if(kinematic == "GEN4b"){
       if(target == "He3"){
-	inputfile = Form("%s/%s/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,run);
+	inputfile = Form("%s/He3/%s/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,run);
       } // end if He3
       else {
 	cout << "ERROR!! There is no target: " << target << ", dummy!" << endl;
