@@ -46,7 +46,7 @@ TString data_object::makeInputFileName(){
 
     else if(kinematic == "GEN4a"){
       if(target == "He3"){
-	inputfile = Form("%s/He3/GEN4/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,run);
+	inputfile = Form("%s/He3/GEN4/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,run);
       } // end if He3
       else {
 	cout << "ERROR!! There is no target: " << target << ", dummy!" << endl;
