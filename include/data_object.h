@@ -24,8 +24,6 @@ data_object(int runnum,const char *data_file_name,const char *kinematic_file_nam
 
 int getRun();
 
-int getIHWP();
-
 TString getPass();
 
 TString getKinematic();
