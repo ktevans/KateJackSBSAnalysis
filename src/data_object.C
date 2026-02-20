@@ -12,7 +12,8 @@
 TString data_object::makeInputFileName(){
 
   //string input_directory = "/volatile/halla/sbs/sbs-gen/GEN_REPLAYS/pass2/TEST/try8";
-  string input_directory = "/volatile/halla/sbs/koeneman/replays/pass3_test_v2";
+  //string input_directory = "/volatile/halla/sbs/koeneman/replays/pass3_test_v2";
+  string input_directory = "/volatile/halla/sbs/vimukthi/test_replay";
   TString inputfile;
   const char *input_directory_char = input_directory.c_str();
   const char *pass_char = pass.Data();
@@ -22,7 +23,8 @@ TString data_object::makeInputFileName(){
 
     if(kinematic == "GEN2"){
       if(target == "He3"){
-	inputfile = Form("%s/He3/%s/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,run);
+	//inputfile = Form("%s/He3/%s/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,run);
+        inputfile = Form("%s/GEN2_2026FEB_seg0/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,run);
       } // end if He3
       else if(target == "H2"){
 	inputfile = Form("%s/H2/%s/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,run);
@@ -34,7 +36,8 @@ TString data_object::makeInputFileName(){
 
     else if(kinematic == "GEN3"){
       if(target == "He3"){
-	inputfile = Form("%s/He3/%s/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,run);
+	//inputfile = Form("%s/He3/%s/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,run);
+        inputfile = Form("%s/GEN3_2026FEB_seg0/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,run);
       } // end if He3
       else if(target == "H2"){
 	inputfile = Form("%s/H2/%s/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,run);
@@ -46,7 +49,8 @@ TString data_object::makeInputFileName(){
 
     else if(kinematic == "GEN4a"){
       if(target == "He3"){
-	inputfile = Form("%s/He3/GEN4/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,run);
+	//inputfile = Form("%s/He3/GEN4/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,run);
+      inputfile = Form("%s/GEN4_2026FEB_seg0/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,run);
       } // end if He3
       else {
 	cout << "ERROR!! There is no target: " << target << ", dummy!" << endl;
@@ -55,7 +59,8 @@ TString data_object::makeInputFileName(){
 
     else if(kinematic == "GEN4b"){
       if(target == "He3"){
-	inputfile = Form("%s/He3/%s/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,run);
+	//inputfile = Form("%s/He3/%s/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,kin_char,run);
+        inputfile = Form("%s/GEN4b_2026FEB_seg0/rootfiles/e1209016_fullreplay_%i_*.root",input_directory_char,run);
       } // end if He3
       else {
 	cout << "ERROR!! There is no target: " << target << ", dummy!" << endl;
