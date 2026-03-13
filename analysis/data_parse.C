@@ -243,7 +243,7 @@ void data_parse(const char *setup_file_name){
   Parse->Branch("bb.hodotdc.clus.tmean",&bb_hodotdc_clus_tmean_out,"bb.hodotdc.clus.tmean/D");
   Parse->Branch("bb.hodotdc.clus.totmean",&bb_hodotdc_clus_totmean_out,"bb.hodotdc.clus.totmean/D");
   int Ndata_bb_hodotdc_clus_id_out;
-  Parse->("Ndata.bb.hodotdc.clus.id",&Ndata_bb_hodotdc_clus_id_out,"Ndata.bb.hodotdc.clus.id/I");
+  Parse->Branch("Ndata.bb.hodotdc.clus.id",&Ndata_bb_hodotdc_clus_id_out,"Ndata.bb.hodotdc.clus.id/I");
 
 
   //gem variables
