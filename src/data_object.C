@@ -12,8 +12,8 @@
 TString data_object::makeInputFileName(){
 
   //string input_directory = "/volatile/halla/sbs/sbs-gen/GEN_REPLAYS/pass2/TEST/try8";
-  //string input_directory = "/volatile/halla/sbs/koeneman/replays/pass3_test_v2";
-  string input_directory = "/volatile/halla/sbs/vimukthi/test_replay";
+  string input_directory = "/volatile/halla/sbs/koeneman/replays/pass3_test_multiseg";
+  //string input_directory = "/volatile/halla/sbs/vimukthi/test_replay";
   TString inputfile;
   const char *input_directory_char = input_directory.c_str();
   const char *pass_char = pass.Data();
