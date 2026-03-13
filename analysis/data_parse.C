@@ -237,6 +237,14 @@ void data_parse(const char *setup_file_name){
   int Ndata_bb_grinch_tdc_hit_time_out;
   Parse->Branch("Ndata.bb.grinch_tdc.hit.time",&Ndata_bb_grinch_tdc_hit_time_out,"Ndata.bb.grinch_tdc.hit.time/I");
 
+  //hodo variables
+  double bb_hodotdc_clus_id_out[maxtracks], bb_hodotdc_clus_tmean_out[maxtracks], bb_hodotdc_clus_totmean_out[maxtracks];
+  Parse->Branch("bb.hodotdc.clus.id",&bb_hodotdc_clus_id_out,"bb.hodotdc.clus.id/D");
+  Parse->Branch("bb.hodotdc.clus.tmean",&bb_hodotdc_clus_tmean_out,"bb.hodotdc.clus.tmean/D");
+  Parse->Branch("bb.hodotdc.clus.totmean",&bb_hodotdc_clus_totmean_out,"bb.hodotdc.clus.totmean/D");
+  int Ndata_bb_hodotdc_clus_id_out;
+  Parse->("Ndata.bb.hodotdc.clus.id",&Ndata_bb_hodotdc_clus_id_out,"Ndata.bb.hodotdc.clus.id/I");
+
 
   //gem variables
   double bb_gem_track_nhits_out, bb_gem_track_ngoodhits_out, bb_gem_track_chi2ndf_out;
@@ -445,6 +453,21 @@ void data_parse(const char *setup_file_name){
   C->SetBranchAddress("bb.grinch_tdc.hit.pmtnum", &bb_grinch_tdc_hit_pmtnum);
   C->SetBranchAddress("bb.grinch_tdc.hit.amp", &bb_grinch_tdc_hit_amp);
   C->SetBranchAddress("Ndata.bb.grinch_tdc.hit.time", &Ndata_bb_grinch_tdc_hit_time);
+
+  //hodo branches
+
+  double bb_hodotdc_clus_id[maxtracks], bb_hodotdc_clus_tmean[maxtracks], bb_hodotdc_clus_totmean[maxtracks]; 
+  int Ndata_bb_hodotdc_clus_id;
+
+  C->SetBranchStatus("bb.hodotdc.clus.id", 1);
+  C->SetBranchStatus("bb.hodotdc.clus.tmean", 1);
+  C->SetBranchStatus("bb.hodotdc.clus.totmean", 1);
+  C->SetBranchStatus("Ndata.bb.hodotdc.clus.id", 1);
+
+  C->SetBranchAddress("bb.hodotdc.clus.id", &bb_hodotdc_clus_id);
+  C->SetBranchAddress("bb.hodotdc.clus.tmean", &bb_hodotdc_clus_tmean);
+  C->SetBranchAddress("bb.hodotdc.clus.totmean", &bb_hodotdc_clus_totmean);
+  C->SetBranchAddress("Ndata.bb.hodotdc.clus.id", &Ndata_bb_hodotdc_clus_id);
 
   //ekine branches
 
@@ -760,6 +783,13 @@ void data_parse(const char *setup_file_name){
     	  bb_grinch_tdc_hit_pmtnum_out[iclus] = bb_grinch_tdc_hit_pmtnum[iclus];
       	  bb_grinch_tdc_hit_amp_out[iclus] = bb_grinch_tdc_hit_amp[iclus];
   	}
+
+    for(int hodoclus = 0; hodoclus < Ndata_bb_hodotdc_clus_id; hodoclus++)
+    {
+          bb_hodotdc_clus_id_out[hodoclus] = bb_hodotdc_clus_id[hodoclus];
+          bb_hodotdc_clus_tmean_out[hodoclus] = bb_hodotdc_clus_tmean[hodoclus];
+          bb_hodotdc_clus_totmean_out[hodoclus] = bb_hodotdc_clus_totmean[hodoclus];
+    }
 
   	bb_sh_nclus_out = (int) bb_sh_nclus;
 	bb_sh_nblk_out = (int) bb_sh_nblk;
